@@ -1,3 +1,11 @@
+# Ignore all executables
+*
+!*.*
+!*/
+!*Makefile
+
+*.DS_Store
+
 # Prerequisites
 *.d
 
