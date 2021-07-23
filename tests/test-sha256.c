@@ -1,23 +1,10 @@
 #include <assert.h>
+#include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+
+#include "hex.h"
 #include "sha256.h"
-// #include "hex.h"
-
-void itoh(int in, char *out) {
-    int tens = in >> 4;
-    int ones = in - tens * 16;
-
-    out[0] = tens >= 10 ? (tens - 10) + 'a' : tens + '0';
-    out[1] = ones >= 10 ? (ones - 10) + 'a' : ones + '0';
-}
-
-void to_string(uint8_t vals[], uint32_t len, char *result) {
-    for (uint32_t i = 0; i < len; i++)
-        itoh(vals[i], result + i * 2);
-
-    result[len * 2] = '\0';
-}
 
 void test_sha256() {
     const uint32_t num_bytes = SHA256_BITS / 8;
@@ -63,6 +50,8 @@ void test_sha256() {
     sha256(result, test5, 44);
     to_string(result, num_bytes, result_str);
     assert(strcmp(result_str, expected5) == 0);
+
+    printf("[PASS]\n");
 }
 
 int main() {
