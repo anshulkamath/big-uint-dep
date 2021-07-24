@@ -3,8 +3,8 @@
 
 #include <stdlib.h>
 
-/** Constant defining the number of bytes for a SHA-2 hash */
-extern const uint16_t SHA256_BITS;
+/** Constant defining the number of bites for a SHA-2 hash */
+#define SHA256_BITS 256
 
 /**
  * @brief Takes in the byte data and encrypts it using SHA-2

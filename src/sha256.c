@@ -5,9 +5,6 @@
 
 #include "sha256.h"
 
-/** Defining the constant from .h file */
-const uint16_t SHA256_BITS = 256;
-
 /** Helper function to get the amount of memory (in bytes) needed for SHA-2 */
 static uint64_t get_memory_size(size_t bits) {
     int curr_size = bits + 1 + 64;
