@@ -1,7 +1,7 @@
 CC = cc
 INCLUDES = -Iinclude -I/usr/local/include 
-LIBS = -Llib -lhex
-CFLAGS = -g -Wall -Wextra -pedantic -std=c17 -Wno-unused-command-line-argument $(INCLUDES) $(LIBS)
+LIBS = -Llib -lhex -ltest
+CFLAGS = -g -Wall -Wextra -pedantic -std=c17 -Wno-unused-command-line-argument -std=c17 $(INCLUDES) $(LIBS)
 
 SRC_FILES = sha256
 OBJ_FILES = $(addprefix obj/,$(SRC_FILES:=.o))

@@ -4,13 +4,14 @@
 #include <stdio.h>
 
 #include "hex.h"
+#include "testing.h"
 #include "sha256.h"
-
-#define GREEN "\x1b[32m"
-#define RESET "\x1b[0m"
 
 // Tests
 void empty_string_test() {
+    // Defining tester
+    testing_logger_t *tester = init_tester();
+
     // Defining test variables
     const uint32_t num_bytes = SHA256_BITS / 8;
     uint8_t result[num_bytes];
@@ -23,12 +24,16 @@ void empty_string_test() {
     
     sha256(result, test, 0);
     to_string(result, num_bytes, result_str);
-    assert(strcmp(result_str, expected) == 0);
+    expect(tester, strcmp(result_str, expected) == 0);
 
-    printf("%s[PASS]%s empty string test\n", GREEN, RESET);
+    // print the results of the test
+    log_tests(tester);
 }
 
 void single_char_test() {
+    // Defining tester
+    testing_logger_t *tester = init_tester();
+
     // Defining test variables
     const uint32_t num_bytes = SHA256_BITS / 8;
     uint8_t result[num_bytes];
@@ -41,12 +46,16 @@ void single_char_test() {
     
     sha256(result, test, 1);
     to_string(result, num_bytes, result_str);
-    assert(strcmp(result_str, expected) == 0);
+    expect(tester, strcmp(result_str, expected) == 0);
 
-    printf("%s[PASS]%s single character test\n", GREEN, RESET);
+    // print the results of the test
+    log_tests(tester);
 }
 
 void small_string_test() {
+    // Defining tester
+    testing_logger_t *tester = init_tester();
+
     // Defining test variables
     const uint32_t num_bytes = SHA256_BITS / 8;
     uint8_t result[num_bytes];
@@ -59,12 +68,16 @@ void small_string_test() {
     
     sha256(result, test, 0);
     to_string(result, num_bytes, result_str);
-    assert(strcmp(result_str, expected) == 0);
+    expect(tester, strcmp(result_str, expected) == 0);
 
-    printf("%s[PASS]%s small string test\n", GREEN, RESET);
+    // print the results of the test
+    log_tests(tester);
 }
 
 void normal_string_test() {
+    // Defining tester
+    testing_logger_t *tester = init_tester();
+
     // Defining test variables
     const uint32_t num_bytes = SHA256_BITS / 8;
     uint8_t result[num_bytes];
@@ -77,12 +90,16 @@ void normal_string_test() {
     
     sha256(result, test, 44);
     to_string(result, num_bytes, result_str);
-    assert(strcmp(result_str, expected) == 0);
+    expect(tester, strcmp(result_str, expected) == 0);
 
-    printf("%s[PASS]%s normal string test\n", GREEN, RESET);
+    // print the results of the test
+    log_tests(tester);
 }
 
 void overflow_test() {
+    // Defining tester
+    testing_logger_t *tester = init_tester();
+
     // Defining test variables
     const uint32_t num_bytes = SHA256_BITS / 8;
     uint8_t result[num_bytes];
@@ -95,12 +112,16 @@ void overflow_test() {
     
     sha256(result, test, 56);
     to_string(result, num_bytes, result_str);
-    assert(strcmp(result_str, expected) == 0);
+    expect(tester, strcmp(result_str, expected) == 0);
 
-    printf("%s[PASS]%s overflow test\n", GREEN, RESET);
+    // print the results of the test
+    log_tests(tester);
 }
 
 void super_overflow_test() {
+    // Defining tester
+    testing_logger_t *tester = init_tester();
+
     // Defining test variables
     const uint32_t num_bytes = SHA256_BITS / 8;
     uint8_t result[num_bytes];
@@ -113,9 +134,10 @@ void super_overflow_test() {
     
     sha256(result, test, 112);
     to_string(result, num_bytes, result_str);
-    assert(strcmp(result_str, expected) == 0);
+    expect(tester, strcmp(result_str, expected) == 0);
 
-    printf("%s[PASS]%s super overflow test\n", GREEN, RESET);
+    // print the results of the test
+    log_tests(tester);
 }
 
 int main() {
