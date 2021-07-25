@@ -45,9 +45,11 @@ void sha256(uint8_t *hash, const char *message, uint8_t length) {
 
     // pre-processing (with padding)
     // 1. copy all data to new memory
-    uint8_t *temp_data = malloc(total_length);
+    uint8_t temp_data[total_length];
     uint64_t cursor;
 
+    // initialize everything to 0 and then copy the original message
+    memset(temp_data, 0, total_length);
     memcpy(temp_data, message, length);
 
     // 2. append a 1 to the data
@@ -126,6 +128,4 @@ void sha256(uint8_t *hash, const char *message, uint8_t length) {
 
     // copy all the hash data into the hash casted as 32 bit integer
     memcpy(hash, hashes, 8 * sizeof(uint32_t));
-
-    free(temp_data);
 }
