@@ -1,10 +1,13 @@
-CC = cc
-INCLUDES = -Iinclude -I/usr/local/include 
-LIBS = -Llib -lhex -ltest
-CFLAGS = -g -Wall -Wextra -pedantic -std=c17 -Wno-unused-command-line-argument -std=c17 $(INCLUDES) $(LIBS)
+CC = /usr/local/opt/llvm/bin/clang
+INCLUDES = -Iinclude
+LIBS = -Llib -lhex -ltesting-logger
+CFLAGS = -g -Wall -Wextra -pedantic -std=c17 -fsanitize=address -Wno-unused-command-line-argument -std=c17 $(INCLUDES) $(LIBS)
 
 SRC_FILES = sha256 big-uint
 OBJ_FILES = $(addprefix obj/,$(SRC_FILES:=.o))
+
+CYAN =\x1b[36m
+WHITE=\x1b[0m
 
 MAIN = main
 MAIN_BINS = $(addprefix bin/,$(MAIN))
@@ -40,7 +43,7 @@ clean:
 	rm -rf obj
 
 test: $(TEST_BINS)
-	@for f in $(TEST_BINS); do echo $$f; ASAN_OPTIONS=detect_leaks=1 $$f; echo; done
+	@echo && for f in $(TEST_BINS); do echo "$(CYAN)$$f$(WHITE)"; ASAN_OPTIONS=detect_leaks=1 $$f; echo; done
 
 memcheck:
 	ASAN_OPTIONS=detect_leaks=1 ./bin/main

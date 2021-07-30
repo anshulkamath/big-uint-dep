@@ -2,11 +2,11 @@
 
 #include <stdio.h>
 #include <string.h>
-#include "testing.h"
+#include "testing-logger.h"
 
 void test_big_uint_equals() {
     // Define variables to be tested with
-    testing_logger_t *tester = init_tester();
+    testing_logger_t *tester = create_tester();
 
     const uint32_t a1[] = { 0x10 };
     const uint32_t b1[] = { 0x10 };
@@ -28,7 +28,7 @@ void test_big_uint_equals() {
 
 void test_big_uint_cmp() {
     // Define variables to be tested with
-    testing_logger_t *tester = init_tester();
+    testing_logger_t *tester = create_tester();
 
     const uint32_t a1[] = { 0x00000010 };
     const uint32_t b1[] = { 0x00000010 };
@@ -55,32 +55,32 @@ void test_big_uint_cmp() {
 
 void test_big_uint_sprint() {
     // Define variables to be tested with
-    testing_logger_t *tester = init_tester();
+    testing_logger_t *tester = create_tester();
 
     // 0 digit number
     const uint32_t *a1;
-    char str1[1];
+    char str1[1] = { 0 };
     big_uint_sprint(str1, a1, 0);
 
     expect(tester, !strcmp(str1, ""));
 
     // 1 digit number
     const uint32_t a2[] = { 0x12345678 };
-    char str2[9];
+    char str2[9] = { 0 };
     big_uint_sprint(str2, a2, 1);
 
     expect(tester, !strcmp(str2, "12345678"));
 
     // 2 digit number
     const uint32_t a3[] = { 0x12345678, 0x87654321 };
-    char str3[17];
+    char str3[18] = { 0 };
     big_uint_sprint(str3, a3, 2);
 
     expect(tester, !strcmp(str3, "12345678 87654321"));
 
     // all 0s
     const uint32_t a4[] = { 0x00000000, 0x00000000 };
-    char str4[17];
+    char str4[18] = { 0 };
     big_uint_sprint(str4, a4, 2);
 
     expect(tester, !strcmp(str4, "00000000 00000000"));
@@ -90,7 +90,7 @@ void test_big_uint_sprint() {
 
 void test_big_uint_shl() {
     // Define variables to be tested with
-    testing_logger_t *tester = init_tester();
+    testing_logger_t *tester = create_tester();
     uint32_t result[5] = { 0 };
 
     // no shift
@@ -126,7 +126,7 @@ void test_big_uint_shl() {
 
 void test_big_uint_shr() {
     // Define variables to be tested with
-    testing_logger_t *tester = init_tester();
+    testing_logger_t *tester = create_tester();
     uint32_t result[5] = { 0 };
 
     // no shift
@@ -162,7 +162,7 @@ void test_big_uint_shr() {
 
 void test_big_uint_add() {
     // Define variables to be tested with
-    testing_logger_t *tester = init_tester();
+    testing_logger_t *tester = create_tester();
     uint32_t result[5] = { 0 };
 
     // Single digit test (no carry, no overflow)
@@ -248,7 +248,7 @@ void test_big_uint_add() {
 
 void test_big_uint_sub() {
     // Define variables to be tested with
-    testing_logger_t *tester = init_tester();
+    testing_logger_t *tester = create_tester();
     uint32_t result[5] = { 0 };
 
     // Single digit test (no carry, no underflow)
@@ -312,7 +312,7 @@ void test_big_uint_sub() {
 
 void test_big_uint_mult() {
     // Define variables to be tested with
-    testing_logger_t *tester = init_tester();
+    testing_logger_t *tester = create_tester();
     uint32_t result[5];
 
     // Single digit test (no carry, no overflow)
@@ -383,7 +383,7 @@ void test_big_uint_mult() {
 }
 
 void test_big_uint_div() {
-    testing_logger_t *tester = init_tester();
+    testing_logger_t *tester = create_tester();
     uint32_t quotients[5] = { 0 };
     uint32_t remainders[5] = { 0 };
 
@@ -499,6 +499,13 @@ void test_big_uint_div() {
 
     log_tests(tester);
 }
+
+// void test_bezout_coeffs() {
+//     testing_logger_t *tester = create_tester();
+//     uint32_t result[5];
+
+//     log_tests(tester);
+// }
 
 int main() {
     test_big_uint_equals();

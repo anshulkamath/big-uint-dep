@@ -110,4 +110,16 @@ void big_uint_mult(uint32_t *result, const uint32_t *a, const uint32_t *b, size_
  */
 void big_uint_div(uint32_t *q, uint32_t *r, const uint32_t *u, const uint32_t *v, size_t len);
 
+/**
+ * @brief Calculates Bezout's identity and puts Bezout's coefficients into x and y.
+ * Bezout's identity is defined to be the integers x, y such that
+ *                              ax + by = gcd(a, b)
+ * 
+ * @param a A pointer to the big_uint a as defined above
+ * @param b A pointer to the big_uint b as defined above
+ * @param x A pointer to the value of x as defined above
+ * @param y A pointer to the value of y as defined above
+ */
+void bezout_coeffs(const uint32_t *a, const uint32_t *b, uint32_t *x, uint32_t *y);
+
 #endif

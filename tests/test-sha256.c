@@ -4,13 +4,13 @@
 #include <stdio.h>
 
 #include "hex.h"
-#include "testing.h"
+#include "testing-logger.h"
 #include "sha256.h"
 
 // Tests
 void empty_string_test() {
     // Defining tester
-    testing_logger_t *tester = init_tester();
+    testing_logger_t *tester = create_tester();
 
     // Defining test variables
     const uint32_t num_bytes = SHA256_BITS / 8;
@@ -32,7 +32,7 @@ void empty_string_test() {
 
 void single_char_test() {
     // Defining tester
-    testing_logger_t *tester = init_tester();
+    testing_logger_t *tester = create_tester();
 
     // Defining test variables
     const uint32_t num_bytes = SHA256_BITS / 8;
@@ -54,7 +54,7 @@ void single_char_test() {
 
 void small_string_test() {
     // Defining tester
-    testing_logger_t *tester = init_tester();
+    testing_logger_t *tester = create_tester();
 
     // Defining test variables
     const uint32_t num_bytes = SHA256_BITS / 8;
@@ -76,7 +76,7 @@ void small_string_test() {
 
 void normal_string_test() {
     // Defining tester
-    testing_logger_t *tester = init_tester();
+    testing_logger_t *tester = create_tester();
 
     // Defining test variables
     const uint32_t num_bytes = SHA256_BITS / 8;
@@ -98,7 +98,7 @@ void normal_string_test() {
 
 void overflow_test() {
     // Defining tester
-    testing_logger_t *tester = init_tester();
+    testing_logger_t *tester = create_tester();
 
     // Defining test variables
     const uint32_t num_bytes = SHA256_BITS / 8;
@@ -120,7 +120,7 @@ void overflow_test() {
 
 void super_overflow_test() {
     // Defining tester
-    testing_logger_t *tester = init_tester();
+    testing_logger_t *tester = create_tester();
 
     // Defining test variables
     const uint32_t num_bytes = SHA256_BITS / 8;
