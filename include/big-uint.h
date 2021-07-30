@@ -25,6 +25,28 @@ int big_uint_equals(const uint32_t *a, const uint32_t *b, size_t len);
 int big_uint_cmp(const uint32_t *a, const uint32_t *b, size_t len);
 
 /**
+ * @brief Returns a pointer to max(a, b). If a == b, returns a
+ * 
+ * @param a The first number to comparee
+ * @param len_a The number of digits in a
+ * @param b The second number to compare
+ * @param len_b The number of digits in b
+ * @return uint32_t* A pointer to max(a, b)
+ */
+uint32_t* big_uint_max(uint32_t *a, size_t len_a, uint32_t *b, size_t len_b);
+
+/**
+ * @brief Returns a pointer to min(a, b). If a == b, returns a
+ * 
+ * @param a The first number to comparee
+ * @param len_a The number of digits in a
+ * @param b The second number to compare
+ * @param len_b The number of digits in b
+ * @return uint32_t* A pointer to min(a, b)
+ */
+uint32_t* big_uint_min(uint32_t *a, size_t len_a, uint32_t *b, size_t len_b);
+
+/**
  * @brief Writes the hex representation fo the given value to the given char*
  * 
  * @param dest The element to write to

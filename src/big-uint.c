@@ -19,6 +19,58 @@ int big_uint_cmp(const uint32_t *a, const uint32_t *b, size_t len) {
     return 0;
 }
 
+uint32_t* big_uint_max(uint32_t *a, size_t len_a, uint32_t *b, size_t len_b) {
+    size_t offset_a = 0;
+    size_t offset_b = 0;
+
+    if (len_a > len_b) {
+        // if any digit of a is nonzero before a digit of b, return a
+        while (offset_a < len_b)
+            if (a[offset_a++]) return a;
+    } else if (len_b > len_a) {
+        // if any digit of b is nonzero beforee a digit of a, return b
+        while (offset_b < len_a)
+            if (b[offset_b++]) return b;
+    }
+
+    // check each corresponding digit to see if either is bigger
+    while (offset_a < len_a) {
+        if (a[offset_a] > b[offset_b]) return a;
+        if (b[offset_b] > a[offset_a]) return b;
+
+        ++offset_a;
+        ++offset_b;
+    }
+
+    return a;
+}
+
+uint32_t* big_uint_min(uint32_t *a, size_t len_a, uint32_t *b, size_t len_b) {
+    size_t offset_a = 0;
+    size_t offset_b = 0;
+
+    if (len_a > len_b) {
+        // if any digit of a is nonzero before a digit of b, return b
+        while (offset_a < len_b)
+            if (a[offset_a++]) return b;
+    } else if (len_b > len_a) {
+        // if any digit of b is nonzero beforee a digit of a, return a
+        while (offset_b < len_a)
+            if (b[offset_b++]) return a;
+    }
+
+    // check each corresponding digit to see if either is smaller
+    while (offset_a < len_a) {
+        if (a[offset_a] > b[offset_b]) return b;
+        if (b[offset_b] > a[offset_a]) return a;
+
+        ++offset_a;
+        ++offset_b;
+    }
+
+    return a;
+}
+
 void big_uint_sprint(char *dest, const uint32_t *value, size_t len) {
     for (size_t i = 0; i < len; i++) {
         if (i == 0) sprintf(&dest[0], "%08x", value[i]);
@@ -57,11 +109,8 @@ void big_uint_shr(uint32_t *result, const uint32_t *a, size_t len, size_t n) {
 void big_uint_add(uint32_t *result, const uint32_t *a, const uint32_t *b, size_t len) {
     uint8_t carry = 0;
     for (int i = len - 1; i >= 0; i--) {
-        // printf("i: %d, a: %u, b: %u, a + b: %u, > max: %d, carry: %u\n", i, a[i], b[i], a[i] + b[i], a[i] + b[i] + carry > UINT32_MAX, carry);
         result[i] = a[i] + b[i] + carry;
-        // printf("ba: %08x, bb: %016llx, sum: %016llx\n", a[i], big_b, big_a + big_b);
         carry = (uint64_t) a[i] + b[i] + carry > UINT32_MAX; // determine if overflow occurred
-        // printf("sum: %u, casted sum: %llu, carry: %d\n\n", a[i] + b[i] + carry, (uint64_t) a[i] + b[i] + carry, carry);
     }
 }
 

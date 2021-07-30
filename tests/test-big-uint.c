@@ -88,6 +88,109 @@ void test_big_uint_sprint() {
     log_tests(tester);
 }
 
+void test_big_uint_max() {
+    // Define variables to be tested with
+    testing_logger_t *tester = create_tester();
+
+    uint32_t a1[] = { 0x00000000 };
+    uint32_t b1[] = { 0x00000000 };
+
+    expect(tester, a1 == big_uint_max(a1, 1, b1, 1));
+
+    uint32_t a2[] = { 0x12345678 };
+    uint32_t b2[] = { 0xffffffff };
+
+    expect(tester, b2 == big_uint_max(a2, 1, b2, 1));
+
+    uint32_t a3[] = { 0xffffffff };
+    uint32_t b3[] = { 0xfffffffe };
+
+    expect(tester, a3 == big_uint_max(a3, 1, b3, 1));
+
+    uint32_t a4[] = { 0x00000000, 0x12345678 };
+    uint32_t b4[] = { 0x00000000, 0xffffffff };
+
+    expect(tester, b4 == big_uint_max(a4, 2, b4, 2));
+
+    uint32_t a5[] = { 0x00000000, 0x12345678 };
+    uint32_t b5[] = { 0xffffffff };
+
+    expect(tester, b5 == big_uint_max(a5, 1, b5, 2));
+
+    uint32_t a6[] = { 0xffffffff, 0xfffffffe };
+    uint32_t b6[] = { 0xffffffff, 0xffffffff };
+
+    expect(tester, b6 == big_uint_max(a6, 2, b6, 2));
+
+    uint32_t a7[] = { 0xffffffff, 0xffffffff, 0xffffffff, 0xfffffffe };
+    uint32_t b7[] = { 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff };
+
+    expect(tester, b7 == big_uint_max(a7, 4, b7, 4));
+
+    uint32_t a8[] = { 0xffffffff, 0xffffffff, 0xffffffff, 0xfffffffe };
+    uint32_t b8[] = { 0x00000000, 0x00000000, 0x00000000, 0xffffffff };
+
+    expect(tester, a8 == big_uint_max(a8, 4, b8, 4));
+
+    uint32_t a9[] = { 0x00000000, 0x00000000, 0x00000000, 0x00000002 };
+    uint32_t b9[] = { 0x00000000, 0x00000000, 0x00000000, 0x00000001 };
+
+    expect(tester, a9 == big_uint_max(a9, 4, b9, 4));
+
+    log_tests(tester);
+}
+
+void test_big_uint_min() {
+    // Define variables to be tested with
+    testing_logger_t *tester = create_tester();
+
+    uint32_t a1[] = { 0x00000000 };
+    uint32_t b1[] = { 0x00000000 };
+
+    expect(tester, a1 == big_uint_max(a1, 1, b1, 1));
+
+    uint32_t a2[] = { 0x12345678 };
+    uint32_t b2[] = { 0xffffffff };
+
+    expect(tester, a2 == big_uint_min(a2, 1, b2, 1));
+
+    uint32_t a3[] = { 0xffffffff };
+    uint32_t b3[] = { 0xfffffffe };
+
+    expect(tester, b3 == big_uint_min(a3, 1, b3, 1));
+
+    uint32_t a4[] = { 0x00000000, 0x12345678 };
+    uint32_t b4[] = { 0x00000000, 0xffffffff };
+
+    expect(tester, a4 == big_uint_min(a4, 2, b4, 2));
+
+    uint32_t a5[] = { 0x00000000, 0x12345678 };
+    uint32_t b5[] = { 0xffffffff };
+
+    expect(tester, a5 == big_uint_min(a5, 1, b5, 2));
+
+    uint32_t a6[] = { 0xffffffff, 0xfffffffe };
+    uint32_t b6[] = { 0xffffffff, 0xffffffff };
+
+    expect(tester, a6 == big_uint_min(a6, 2, b6, 2));
+
+    uint32_t a7[] = { 0xffffffff, 0xffffffff, 0xffffffff, 0xfffffffe };
+    uint32_t b7[] = { 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff };
+
+    expect(tester, a7 == big_uint_min(a7, 4, b7, 4));
+
+    uint32_t a8[] = { 0xffffffff, 0xffffffff, 0xffffffff, 0xfffffffe };
+    uint32_t b8[] = { 0x00000000, 0x00000000, 0x00000000, 0xffffffff };
+
+    expect(tester, b8 == big_uint_min(a8, 4, b8, 4));
+
+    uint32_t a9[] = { 0x00000000, 0x00000000, 0x00000000, 0x00000002 };
+    uint32_t b9[] = { 0x00000000, 0x00000000, 0x00000000, 0x00000001 };
+
+    expect(tester, b9 == big_uint_min(a9, 4, b9, 4));
+
+    log_tests(tester);
+}
 void test_big_uint_shl() {
     // Define variables to be tested with
     testing_logger_t *tester = create_tester();
@@ -511,6 +614,8 @@ int main() {
     test_big_uint_equals();
     test_big_uint_cmp();
     test_big_uint_sprint();
+    test_big_uint_max();
+    test_big_uint_min();
     test_big_uint_shl();
     test_big_uint_shr();
     test_big_uint_add();
