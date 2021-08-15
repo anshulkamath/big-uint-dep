@@ -603,12 +603,83 @@ void test_big_uint_div() {
     log_tests(tester);
 }
 
-// void test_bezout_coeffs() {
-//     testing_logger_t *tester = create_tester();
-//     uint32_t result[5];
+void test_big_uint_gcd() {
+    testing_logger_t *tester = create_tester();
+    uint32_t result[5] = { 0 };
 
-//     log_tests(tester);
-// }
+    // relatively prime example
+    const uint32_t a1[] = { 0x00000005 };
+    const uint32_t b1[] = { 0x00000007 };
+    const uint32_t expected1[] = { 0x00000001 };
+    big_uint_gcd(result, a1, b1, 1);
+
+    expect(tester, big_uint_equals(result, expected1, 1));
+
+    // non-relatively prime
+    const uint32_t a2[] = { 0x00000012 };
+    const uint32_t b2[] = { 0x00000015 };
+    const uint32_t expected2[] = { 0x00000003 };
+    big_uint_gcd(result, a2, b2, 1);
+
+    expect(tester, big_uint_equals(result, expected2, 1));
+
+    // padded 0, non-relatively prime
+    const uint32_t a3[] = { 0x00000000, 0x8ab6d43d };
+    const uint32_t b3[] = { 0x00000000, 0xab43d5eb };
+    const uint32_t expected3[] = { 0x00000000, 0x0000000b };
+    big_uint_gcd(result, a3, b3, 2);
+
+    expect(tester, big_uint_equals(result, expected3, 2));
+
+    // multi-digit, non-relatively prime
+    const uint32_t a4[] = { 0xffe352fa, 0x8ab6d43d };
+    const uint32_t b4[] = { 0xc78d5a01, 0xab43d5eb };
+    const uint32_t expected4[] = { 0x00000000, 0x00000007 };
+    big_uint_gcd(result, a4, b4, 2);
+
+    expect(tester, big_uint_equals(result, expected4, 2));
+
+     // Multiple digit test (no carry, overflow)
+    const uint32_t a5[] = { 0x00020000, 0x00010000 };
+    const uint32_t b5[] = { 0x00000000, 0x02000000 };
+    const uint32_t expected5[] = { 0x00000000, 0x00010000 };
+    big_uint_gcd(result, a5, b5, 2);
+
+    expect(tester, big_uint_equals(result, expected5, 2));
+
+    // Multiple digit test (no carry, overflow)
+    const uint32_t a6[] = { 0x00000025, 0x00300000 };
+    const uint32_t b6[] = { 0x00000013, 0x11000000 };
+    const uint32_t expected6[] = { 0x00000000, 0x00100000 };
+    big_uint_gcd(result, a6, b6, 2);
+
+    expect(tester, big_uint_equals(result, expected6, 2));
+
+    // Multiple digit test (carry, overflow)
+    const uint32_t a7[] = { 0x00000000, 0x10000000 };
+    const uint32_t b7[] = { 0x00001100, 0xf0025000 };
+    const uint32_t expected7[] = { 0x00000000, 0x00001000 };
+    big_uint_gcd(result, a7, b7, 2);
+
+    expect(tester, big_uint_equals(result, expected7, 2));
+
+    // Misc. tests
+    const uint32_t a8[] = { 0x00000000, 0x31f596dc };
+    const uint32_t b8[] = { 0x00000000, 0x0000fedc };
+    const uint32_t expected8[] = { 0x00000000, 0x000004 };
+    big_uint_gcd(result, a8, b8, 2);
+
+    expect(tester, big_uint_equals(result, expected8, 2));
+
+    const uint32_t a9[] = { 0x000087b2, 0x799af391 };
+    const uint32_t b9[] = { 0x0000a941, 0x69aca1e3 };
+    const uint32_t expected9[] = { 0x00000000, 0x00000001 };
+    big_uint_gcd(result, a9, b9, 2);
+
+    expect(tester, big_uint_equals(result, expected9, 2));
+
+    log_tests(tester);
+}
 
 int main() {
     test_big_uint_equals();
@@ -622,6 +693,7 @@ int main() {
     test_big_uint_sub();
     test_big_uint_mult();
     test_big_uint_div();
+    test_big_uint_gcd();
 
     return 0;
 }
