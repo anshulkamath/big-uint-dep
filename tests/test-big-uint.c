@@ -681,6 +681,114 @@ void test_big_uint_gcd() {
     log_tests(tester);
 }
 
+void test_big_uint_gcd_extended() {
+	testing_logger_t *tester = create_tester();
+	uint32_t result_x[5] = { 0 };
+	uint32_t result_y[5] = { 0 };
+
+	const uint32_t a1[] = { 0x0000008f };
+	const uint32_t b1[] = { 0x000000ea };
+	const uint32_t expected_x1[] = { 0xfffffffd };
+	const uint32_t expected_y1[] = { 0x00000005 };
+
+	big_uint_gcd_extended(result_x, result_y, a1, b1, 1);
+
+	expect(tester, big_uint_equals(expected_x1, result_x, 1));
+	expect(tester, big_uint_equals(expected_y1, result_y, 1));
+
+	const uint32_t a2[] = { 0x2b487392 };
+	const uint32_t b2[] = { 0xd2c60104 };
+	const uint32_t expected_x2[] = { 0x0564f14f };
+	const uint32_t expected_y2[] = { 0xe5bb484b };
+
+	big_uint_gcd_extended(result_x, result_y, a2, b2, 1);
+
+	expect(tester, big_uint_equals(expected_x2, result_x, 1));
+	expect(tester, big_uint_equals(expected_y2, result_y, 1));
+
+	const uint32_t a3[] = { 0x00000000, 0x30bfb01a };
+	const uint32_t b3[] = { 0x00000000, 0x987de21e };
+	const uint32_t expected_x3[] = { 0xffffffff, 0xf6bd5ebe };
+	const uint32_t expected_y3[] = { 0x00000000, 0x1cf7999b };
+
+	big_uint_gcd_extended(result_x, result_y, a3, b3, 2);
+
+	expect(tester, big_uint_equals(expected_x3, result_x, 2));
+	expect(tester, big_uint_equals(expected_y3, result_y, 2));
+
+	const uint32_t a4[] = { 0x0e8b90bd, 0x220b8c80 };
+	const uint32_t b4[] = { 0x6ec46fd6, 0xe7ee1360 };
+	const uint32_t expected_x4[] = { 0x0021b929, 0x43ebb88f };
+	const uint32_t expected_y4[] = { 0xfeff2f07, 0xf8541193 };
+
+	big_uint_gcd_extended(result_x, result_y, a4, b4, 2);
+
+	expect(tester, big_uint_equals(expected_x4, result_x, 2));
+	expect(tester, big_uint_equals(expected_y4, result_y, 2));
+
+	const uint32_t a5[] = { 0x00000000, 0xcec6b8e4 };
+	const uint32_t b5[] = { 0x7bec5ab5, 0xe87e8fcf };
+	const uint32_t expected_x5[] = { 0xffffffff, 0xf2e4bc35 };
+	const uint32_t expected_y5[] = { 0x07dad8bf, 0x603c39da };
+
+	big_uint_gcd_extended(result_x, result_y, a5, b5, 2);
+
+	expect(tester, big_uint_equals(expected_x5, result_x, 2));
+	expect(tester, big_uint_equals(expected_y5, result_y, 2));
+
+	const uint32_t a6[] = { 0x0ab1a3c2, 0xf61a4999 };
+	const uint32_t b6[] = { 0x00000000, 0x083a6d6c };
+	const uint32_t expected_x6[] = { 0x00000000, 0x0336ce65 };
+	const uint32_t expected_y6[] = { 0xfbd2a1ae, 0x9bcddfcb };
+
+	big_uint_gcd_extended(result_x, result_y, a6, b6, 2);
+
+	expect(tester, big_uint_equals(expected_x6, result_x, 2));
+	expect(tester, big_uint_equals(expected_y6, result_y, 2));
+
+	const uint32_t a7[] = { 0xd6cfbac0, 0xf2dcfe01, 0xab2a4b8d };
+	const uint32_t b7[] = { 0x41763a5f, 0x991b4b60, 0x84285b8e };
+	const uint32_t expected_x7[] = { 0x016c1fa8, 0xee5ca7b3, 0x8afa8433 };
+	const uint32_t expected_y7[] = { 0xfb552303, 0x6be085f9, 0xea8238e3 };
+
+	big_uint_gcd_extended(result_x, result_y, a7, b7, 3);
+
+	expect(tester, big_uint_equals(expected_x7, result_x, 3));
+	expect(tester, big_uint_equals(expected_y7, result_y, 3));
+
+	const uint32_t a8[] = { 0x5eda613c, 0x268411c6, 0x987e7270 };
+	const uint32_t b8[] = { 0xc6f11378, 0x4d56c2b4, 0xa2799234 };
+	const uint32_t expected_x8[] = { 0xfd1ea5e9, 0x3a87833e, 0x0f5901bd };
+	const uint32_t expected_y8[] = { 0x060a7f7c, 0x08577482, 0xd35e08b6 };
+
+	big_uint_gcd_extended(result_x, result_y, a8, b8, 3);
+
+	expect(tester, big_uint_equals(expected_x8, result_x, 3));
+	expect(tester, big_uint_equals(expected_y8, result_y, 3));
+
+	const uint32_t a9[] = { 0x00000000, 0x00000000, 0x2adaa46f };
+	const uint32_t b9[] = { 0x00000000, 0xdaff9a2e, 0x7f6758e3 };
+	const uint32_t expected_x9[] = { 0x00000000, 0x00000000, 0x09c35db4 };
+	const uint32_t expected_y9[] = { 0xffffffff, 0xce1b6a35, 0x19c3216b };
+
+	big_uint_gcd_extended(result_x, result_y, a9, b9, 3);
+
+	expect(tester, big_uint_equals(expected_x9, result_x, 3));
+	expect(tester, big_uint_equals(expected_y9, result_y, 3));
+
+	const uint32_t a10[] = { 0x00000000, 0x00000000, 0xfcb90859 };
+	const uint32_t b10[] = { 0x00000000, 0x00000000, 0x8221014d };
+	const uint32_t expected_x10[] = { 0xffffffff, 0xffffffff, 0xe5e6a3b3 };
+	const uint32_t expected_y10[] = { 0x00000000, 0x00000000, 0x32afd6de };
+
+	big_uint_gcd_extended(result_x, result_y, a10, b10, 3);
+
+	expect(tester, big_uint_equals(expected_x10, result_x, 3));
+	expect(tester, big_uint_equals(expected_y10, result_y, 3));
+
+	log_tests(tester);
+}
+
 int main() {
     test_big_uint_equals();
     test_big_uint_cmp();
@@ -694,6 +802,7 @@ int main() {
     test_big_uint_mult();
     test_big_uint_div();
     test_big_uint_gcd();
+    test_big_uint_gcd_extended();
 
     return 0;
 }

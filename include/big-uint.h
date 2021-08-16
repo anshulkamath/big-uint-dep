@@ -142,4 +142,17 @@ void big_uint_div(uint32_t *q, uint32_t *r, const uint32_t *u, const uint32_t *v
  */
 void big_uint_gcd(uint32_t* d, const uint32_t *a, const uint32_t *b, size_t len);
 
+/**
+ * @brief Finds Bezout's identity for the given big uint's a and b. Bezout's identity is
+ * defined to be the values x, y in the natural numbers such that:
+ *                                  ax + by = gcd(a, b)
+ * 
+ * @param x Pointer for where to store the resulting value of x
+ * @param y Pointer for where to store the resulting value of y
+ * @param a Pointer to big uint a from above
+ * @param b Pointer to big uint a from above
+ * @param len The number of digits in each big uint
+ */
+void big_uint_gcd_extended(uint32_t* x, uint32_t *y, const uint32_t *a, const uint32_t *b, size_t len);
+
 #endif

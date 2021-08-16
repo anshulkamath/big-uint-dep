@@ -227,12 +227,9 @@ void big_uint_div(uint32_t *q, uint32_t *r, const uint32_t *u, const uint32_t *v
 }
 
 // helper function for the recursive gcd algorithm
-static void big_uint_gcd_helper(uint32_t *d, const uint32_t *a, const uint32_t *b, size_t len) {
+static void big_uint_gcd_helper(uint32_t *d, const uint32_t *a, const uint32_t *b, const uint32_t *zero, size_t len) {
     uint32_t quotient[len], remainder[len];
     big_uint_div(quotient, remainder, a, b, len);
-
-    uint32_t zero[len];
-    memset(zero, 0, len * sizeof(uint32_t));
 
     // if the remainder is 0, then we are at the bottom of euclid's algorithm.
     // write this gcd to d and return
@@ -241,7 +238,7 @@ static void big_uint_gcd_helper(uint32_t *d, const uint32_t *a, const uint32_t *
         return;
     }
     
-    big_uint_gcd_helper(d, b, remainder, len);
+    big_uint_gcd_helper(d, b, remainder, zero, len);
 }
 
 void big_uint_gcd(uint32_t *d, const uint32_t *a_init, const uint32_t *b_init, size_t len) {
@@ -251,6 +248,62 @@ void big_uint_gcd(uint32_t *d, const uint32_t *a_init, const uint32_t *b_init, s
 
     memcpy(a, a_is_bigger ? a_init : b_init, len * sizeof(uint32_t));
     memcpy(b, !a_is_bigger ? a_init : b_init, len * sizeof(uint32_t));
+
+    uint32_t zero[len];
+    memset(zero, 0, len * sizeof(uint32_t));
     
-    big_uint_gcd_helper(d, a, b, len);
+    big_uint_gcd_helper(d, a, b, zero, len);
+}
+
+// swaps the big uint pointed to by a with the big uint pointed to by b
+static void big_uint_swap(uint32_t *a, uint32_t *b, size_t len) {
+    uint32_t temp[len];
+    memcpy(temp, a, len * sizeof(uint32_t));
+    memcpy(a, b, len * sizeof(uint32_t));
+    memcpy(b, temp, len * sizeof(uint32_t));
+}
+
+static void big_uint_gcd_extended_helper(uint32_t* x, uint32_t *y, const uint32_t *a, const uint32_t *b, const uint32_t *zero, size_t len) {
+    uint32_t quotient[len], remainder[len];
+    big_uint_div(quotient, remainder, a, b, len);
+
+    // base case: if the remainder is 0, initialize x = 0 and y = 1
+    if (big_uint_equals(remainder, zero, len)) {
+        memset(x, 0, len * sizeof(uint32_t));
+        memset(y, 0, len * sizeof(uint32_t));
+
+        y[len - 1] = 1; // initialize y for recursive backtrace
+        return;
+    }
+
+    // recurse downwards to get the x and y values of the preceding equation in euclid's algorithm
+    big_uint_gcd_extended_helper(x, y, b, remainder, zero, len);
+    
+    // apply x -= y * quotient
+    uint32_t y_times_quotient[len], x_subtracted[len];
+    
+    memset(y_times_quotient, 0, len * sizeof(uint32_t));
+    memset(x_subtracted, 0, len * sizeof(uint32_t));
+
+    big_uint_mult(y_times_quotient, y, quotient, len);
+    big_uint_sub(x_subtracted, x, y_times_quotient, len);
+
+    memcpy(x, x_subtracted, len * sizeof(uint32_t));
+
+    // swap x and y
+    big_uint_swap(x, y, len);
+}
+
+void big_uint_gcd_extended(uint32_t* x, uint32_t *y, const uint32_t *a_init, const uint32_t *b_init, size_t len) {
+    // making a > b for the algorithm
+    uint32_t a[len], b[len];
+    int a_is_bigger = big_uint_cmp(a_init, b_init, len) >= 0;
+
+    memcpy(a, a_is_bigger ? a_init : b_init, len * sizeof(uint32_t));
+    memcpy(b, !a_is_bigger ? a_init : b_init, len * sizeof(uint32_t));
+    
+    uint32_t zero[len];
+    memset(zero, 0, len * sizeof(uint32_t));
+
+    big_uint_gcd_extended_helper(x, y, a, b, zero, len);
 }
