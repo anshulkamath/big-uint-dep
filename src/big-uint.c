@@ -4,6 +4,19 @@
 #include <stdio.h>
 #include <string.h>
 
+// helper function
+static void print_binary(uint32_t num) {
+    for (int i = 31; i >= 0; i--) {
+        if (i % 4 == 3) printf(" ");
+        printf("%d", (num >> i) & 1);
+    }
+    printf("\n");
+}
+
+static void print_hex(uint32_t num) {
+    printf("%08x\n", num);
+}
+
 int big_uint_equals(const uint32_t *a, const uint32_t *b, size_t len) {
     for (size_t i = 0; i < len; i++)
         if (a[i] != b[i]) return 0;
@@ -104,6 +117,48 @@ void big_uint_shr(uint32_t *result, const uint32_t *a, size_t len, size_t n) {
 
     for (size_t i = 0; i < len; i++)
         result[i] = ((int) i - (int) n) >=  0 ? a[i - n] : 0;
+}
+
+void big_uint_shl2(uint32_t *result, const uint32_t *a, size_t len, size_t n) {
+    // if we are overshifting the result should be 0
+    const uint8_t BITS_32 = 8 * sizeof(uint32_t);
+    if (n >= len * BITS_32) {
+        memset(result, 0, sizeof(uint32_t) * len);
+        return;
+    }
+
+    // first we shift left the number of digits possible
+    big_uint_shl(result, a, len, n / BITS_32);
+
+    size_t shift = n % BITS_32;
+    uint32_t shifted = 0;
+
+    for (int i = len - 1; i >= 0; i--) {
+        uint32_t temp = shifted;
+        shifted = result[i] >> (BITS_32 - shift);
+        result[i] = temp | (result[i] << shift);
+    }
+}
+
+void big_uint_shr2(uint32_t *result, const uint32_t *a, size_t len, size_t n) {
+    // if we are overshifting the result should be 0
+    const uint8_t BITS_32 = 8 * sizeof(uint32_t);
+    if (n >= len * BITS_32) {
+        memset(result, 0, sizeof(uint32_t) * len);
+        return;
+    }
+
+    // first we shift right the number of digits possible
+    big_uint_shr(result, a, len, n / BITS_32);
+
+    size_t shift = n % BITS_32;
+    uint32_t shifted = 0;
+
+    for (size_t i = 0; i < len; i++) {
+        uint32_t temp = shifted;
+        shifted = result[i] << (BITS_32 - shift);
+        result[i] = (result[i] >> shift) | temp;
+    }
 }
 
 void big_uint_add(uint32_t *result, const uint32_t *a, const uint32_t *b, size_t len) {
@@ -211,7 +266,6 @@ void big_uint_div(uint32_t *q, uint32_t *r, const uint32_t *u, const uint32_t *v
     memset(r, 0, len * sizeof(uint32_t));
 
     for (size_t i = 0; i < len; i++) {
-        // printf("%zu\n", i);
         big_uint_shl(q, q, len, 1);
         big_uint_shl(r, r, len, 1);
         r[len - 1] = u[i];

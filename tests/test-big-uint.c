@@ -191,6 +191,7 @@ void test_big_uint_min() {
 
     log_tests(tester);
 }
+
 void test_big_uint_shl() {
     // Define variables to be tested with
     testing_logger_t *tester = create_tester();
@@ -223,6 +224,13 @@ void test_big_uint_shl() {
     big_uint_shl(result, a4, 2, 2);
 
     expect(tester, big_uint_equals(result, expected4, 2));
+
+    // random shift
+    const uint32_t a5[] = { 0x00abcdef, 0x12345678 };
+    const uint32_t expected5[] = { 0x12345678, 0x00000000 };
+    big_uint_shl(result, a5, 2, 1);
+
+    expect(tester, big_uint_equals(result, expected5, 2));
 
     log_tests(tester);
 }
@@ -257,6 +265,92 @@ void test_big_uint_shr() {
     const uint32_t a4[] = { 0xffffffff, 0xeeeeeeee };
     const uint32_t expected4[] = { 0x00000000, 0x00000000 };
     big_uint_shr(result, a4, 2, 2);
+
+    expect(tester, big_uint_equals(result, expected4, 2));
+
+    log_tests(tester);
+}
+
+void test_big_uint_shl2() {
+    // Define variables to be tested with
+    testing_logger_t *tester = create_tester();
+    uint32_t result[5] = { 0 };
+
+    // no shift
+    const uint32_t a1[] = { 0x00000001 };
+    const uint32_t expected1[] = { 0x00000001 };
+    big_uint_shl2(result, a1, 1, 0);
+
+    expect(tester, big_uint_equals(result, expected1, 1));
+
+    // shift over length
+    const uint32_t a2[] = { 0x00000001 };
+    const uint32_t expected2[] = { 0x00000000 };
+    big_uint_shl2(result, a2, 1, 32);
+
+    expect(tester, big_uint_equals(result, expected2, 1));
+
+    // shift by 1
+    const uint32_t a3[] = { 0x00000001 };
+    const uint32_t expected3[] = { 0x00000002 };
+    big_uint_shl2(result, a3, 1, 1);
+
+    expect(tester, big_uint_equals(result, expected3, 1));
+
+    // shift by 1 carry
+    const uint32_t a4[] = { 0x00000001, 0xffffffff };
+    const uint32_t expected4[] = { 0x00000003, 0xfffffffe };
+    big_uint_shl2(result, a4, 2, 1);
+
+    expect(tester, big_uint_equals(result, expected4, 2));
+
+    // shift by 1 overflow
+    const uint32_t a5[] = { 0xffffffff, 0xffffffff };
+    const uint32_t expected5[] = { 0xffffffff, 0xfffffffe };
+    big_uint_shl2(result, a5, 2, 1);
+
+    expect(tester, big_uint_equals(result, expected5, 2));
+
+    // random shift
+    const uint32_t a6[] = { 0x00abcdef, 0x12345678 };
+    const uint32_t expected6[] = { 0x8d159e00, 0x00000000 };
+    big_uint_shl2(result, a6, 2, 38);
+
+    expect(tester, big_uint_equals(result, expected6, 2));
+
+    log_tests(tester);
+}
+
+void test_big_uint_shr2() {
+    // Define variables to be tested with
+    testing_logger_t *tester = create_tester();
+    uint32_t result[5] = { 0 };
+
+    // no shift
+    const uint32_t a1[] = { 0x00000001 };
+    const uint32_t expected1[] = { 0x00000001 };
+    big_uint_shr2(result, a1, 1, 0);
+
+    expect(tester, big_uint_equals(result, expected1, 1));
+
+    // shift over length
+    const uint32_t a2[] = { 0x00000001 };
+    const uint32_t expected2[] = { 0x00000000 };
+    big_uint_shr2(result, a2, 1, 1);
+
+    expect(tester, big_uint_equals(result, expected2, 1));
+
+    // shift by 1 carry
+    const uint32_t a3[] = { 0xffffffff, 0xeeeeeeee };
+    const uint32_t expected3[] = { 0x7fffffff, 0xf7777777 };
+    big_uint_shr2(result, a3, 2, 1);
+
+    expect(tester, big_uint_equals(result, expected3, 2));
+
+    // random shift
+    const uint32_t a4[] = { 0x00abcdef, 0x12345678 };
+    const uint32_t expected4[] = { 0x00000000, 0x00002af37 };
+    big_uint_shr2(result, a4, 2, 38);
 
     expect(tester, big_uint_equals(result, expected4, 2));
 
@@ -797,6 +891,8 @@ int main() {
     test_big_uint_min();
     test_big_uint_shl();
     test_big_uint_shr();
+    test_big_uint_shl2();
+    test_big_uint_shr2();
     test_big_uint_add();
     test_big_uint_sub();
     test_big_uint_mult();

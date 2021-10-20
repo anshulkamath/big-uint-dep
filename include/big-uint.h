@@ -85,6 +85,26 @@ void big_uint_shl(uint32_t *result, const uint32_t *a, size_t len, size_t n);
 void big_uint_shr(uint32_t *result, const uint32_t *a, size_t len, size_t n);
 
 /**
+ * @brief Shifts the bits of a to the left n times
+ * 
+ * @param result Where the result is stored
+ * @param a The number to shift
+ * @param len The number of digits in the shiftee
+ * @param n The number of bits to shift left
+ */
+void big_uint_shl2(uint32_t *result, const uint32_t *a, size_t len, size_t n);
+
+/**
+ * @brief Shifts the bits of a to the right n times
+ * 
+ * @param result Where the result is stored
+ * @param a The number to shift
+ * @param len The number of digits in the shiftee
+ * @param n The number of bits to shift right
+ */
+void big_uint_shr2(uint32_t *result, const uint32_t *a, size_t len, size_t n);
+
+/**
  * @brief Calculates the sum a + b and writes it to result.
  * @note If the sum results in overflow, returns sum mod 2^n,
  *       where n is the number of bits in the integer
