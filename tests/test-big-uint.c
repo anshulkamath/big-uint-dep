@@ -200,7 +200,7 @@ void test_big_uint_shl() {
     // no shift
     const uint32_t a1[] = { 0x00000001 };
     const uint32_t expected1[] = { 0x00000001 };
-    big_uint_shl(result, a1, 1, 0);
+    big_uint_shl(result, a1, 0, 1);
 
     expect(tester, big_uint_equals(result, expected1, 1));
 
@@ -214,7 +214,7 @@ void test_big_uint_shl() {
     // shift by 1
     const uint32_t a3[] = { 0xffffffff, 0xeeeeeeee };
     const uint32_t expected3[] = { 0xeeeeeeee, 0x00000000 };
-    big_uint_shl(result, a3, 2, 1);
+    big_uint_shl(result, a3, 1, 2);
 
     expect(tester, big_uint_equals(result, expected3, 2));
 
@@ -228,21 +228,21 @@ void test_big_uint_shl() {
     // random shift
     const uint32_t a5[] = { 0x00abcdef, 0x12345678 };
     const uint32_t expected5[] = { 0x12345678, 0x00000000 };
-    big_uint_shl(result, a5, 2, 1);
+    big_uint_shl(result, a5, 1, 2);
 
     expect(tester, big_uint_equals(result, expected5, 2));
 
     // operator assignment
     uint32_t a6[] = { 0x00abcdef, 0x12345678 };
     const uint32_t expected6[] = { 0x12345678, 0x00000000 };
-    big_uint_shl(a6, a6, 2, 1);
+    big_uint_shl(a6, a6, 1, 2);
 
     expect(tester, big_uint_equals(a6, expected6, 2));
 
     // no shift
     const uint32_t a7[] = { 0xffffffff, 0xfffffffe };
     const uint32_t expected7[] = { 0xffffffff, 0xfffffffe};
-    big_uint_shl(result, a7, 2, 0);
+    big_uint_shl(result, a7, 0, 2);
 
     expect(tester, big_uint_equals(result, expected7, 2));
 
@@ -257,7 +257,7 @@ void test_big_uint_shr() {
     // no shift
     const uint32_t a1[] = { 0x00000001 };
     const uint32_t expected1[] = { 0x00000001 };
-    big_uint_shr(result, a1, 1, 0);
+    big_uint_shr(result, a1, 0, 1);
 
     expect(tester, big_uint_equals(result, expected1, 1));
 
@@ -271,7 +271,7 @@ void test_big_uint_shr() {
     // shift by 1
     const uint32_t a3[] = { 0xffffffff, 0xeeeeeeee };
     const uint32_t expected3[] = { 0x00000000, 0xffffffff };
-    big_uint_shr(result, a3, 2, 1);
+    big_uint_shr(result, a3, 1, 2);
 
     expect(tester, big_uint_equals(result, expected3, 2));
 
@@ -285,14 +285,14 @@ void test_big_uint_shr() {
     // operator assignment
     uint32_t a5[] = { 0xffffffff, 0xeeeeeeee };
     const uint32_t expected5[] = { 0x00000000, 0xffffffff };
-    big_uint_shr(a5, a5, 2, 1);
+    big_uint_shr(a5, a5, 1, 2);
 
     expect(tester, big_uint_equals(a5, expected5, 2));
 
     // no shift
     const uint32_t a6[] = { 0xffffffff, 0xfffffffe };
     const uint32_t expected6[] = { 0xffffffff, 0xfffffffe};
-    big_uint_shr(result, a6, 2, 0);
+    big_uint_shr(result, a6, 0, 2);
 
     expect(tester, big_uint_equals(result, expected6, 2));
 
@@ -307,14 +307,14 @@ void test_big_uint_shl2() {
     // no shift
     const uint32_t a1[] = { 0x00000001 };
     const uint32_t expected1[] = { 0x00000001 };
-    big_uint_shl2(result, a1, 1, 0);
+    big_uint_shl2(result, a1, 0, 1);
 
     expect(tester, big_uint_equals(result, expected1, 1));
 
     // shift over length
     const uint32_t a2[] = { 0x00000001 };
     const uint32_t expected2[] = { 0x00000000 };
-    big_uint_shl2(result, a2, 1, 32);
+    big_uint_shl2(result, a2, 32, 1);
 
     expect(tester, big_uint_equals(result, expected2, 1));
 
@@ -328,35 +328,35 @@ void test_big_uint_shl2() {
     // shift by 1 carry
     uint32_t a4[] = { 0x00000001, 0xffffffff };
     const uint32_t expected4[] = { 0x00000003, 0xfffffffe };
-    big_uint_shl2(result, a4, 2, 1);
+    big_uint_shl2(result, a4, 1, 2);
 
     expect(tester, big_uint_equals(result, expected4, 2));
 
     // shift by 1 overflow
     const uint32_t a5[] = { 0xffffffff, 0xffffffff };
     const uint32_t expected5[] = { 0xffffffff, 0xfffffffe };
-    big_uint_shl2(result, a5, 2, 1);
+    big_uint_shl2(result, a5, 1, 2);
 
     expect(tester, big_uint_equals(result, expected5, 2));
 
     // random shift
     const uint32_t a6[] = { 0x00abcdef, 0x12345678 };
     const uint32_t expected6[] = { 0x8d159e00, 0x00000000 };
-    big_uint_shl2(result, a6, 2, 38);
+    big_uint_shl2(result, a6, 38, 2);
 
     expect(tester, big_uint_equals(result, expected6, 2));
 
     // operator assignment
     uint32_t a7[] = { 0x00abcdef, 0x12345678 };
     const uint32_t expected7[] = { 0x8d159e00, 0x00000000 };
-    big_uint_shl2(a7, a7, 2, 38);
+    big_uint_shl2(a7, a7, 38, 2);
 
     expect(tester, big_uint_equals(a7, expected7, 2));
 
     // no shift
     const uint32_t a8[] = { 0xffffffff, 0xfffffffe };
     const uint32_t expected8[] = { 0xffffffff, 0xfffffffe};
-    big_uint_shl2(result, a8, 2, 0);
+    big_uint_shl2(result, a8, 0, 2);
 
     expect(tester, big_uint_equals(result, expected8, 2));
 
@@ -377,7 +377,7 @@ void test_big_uint_shr2() {
     // no shift
     const uint32_t a1[] = { 0x00000001 };
     const uint32_t expected1[] = { 0x00000001 };
-    big_uint_shr2(result, a1, 1, 0);
+    big_uint_shr2(result, a1, 0, 1);
 
     expect(tester, big_uint_equals(result, expected1, 1));
 
@@ -391,28 +391,28 @@ void test_big_uint_shr2() {
     // shift by 1 carry
     const uint32_t a3[] = { 0xffffffff, 0xeeeeeeee };
     const uint32_t expected3[] = { 0x7fffffff, 0xf7777777 };
-    big_uint_shr2(result, a3, 2, 1);
+    big_uint_shr2(result, a3, 1, 2);
 
     expect(tester, big_uint_equals(result, expected3, 2));
 
     // random shift
     const uint32_t a4[] = { 0x00abcdef, 0x12345678 };
     const uint32_t expected4[] = { 0x00000000, 0x00002af37 };
-    big_uint_shr2(result, a4, 2, 38);
+    big_uint_shr2(result, a4, 38, 2);
 
     expect(tester, big_uint_equals(result, expected4, 2));
 
     // operator assignment
     uint32_t a5[] = { 0x00abcdef, 0x12345678 };
     const uint32_t expected5[] = { 0x00000000, 0x00002af37 };
-    big_uint_shr2(a5, a5, 2, 38);
+    big_uint_shr2(a5, a5, 38, 2);
 
     expect(tester, big_uint_equals(a5, expected5, 2));
 
     // no shift
     const uint32_t a6[] = { 0xffffffff, 0xfffffffe };
     const uint32_t expected6[] = { 0xffffffff, 0xfffffffe};
-    big_uint_shr2(result, a6, 2, 0);
+    big_uint_shr2(result, a6, 0, 2);
 
     expect(tester, big_uint_equals(result, expected6, 2));
 

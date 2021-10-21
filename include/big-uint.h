@@ -63,7 +63,6 @@ void big_uint_sprint(char *dest, const uint32_t *value, size_t len);
  */
 void big_uint_print(const uint32_t *value, size_t len);
 
-
 /**
  * @brief Shifts the digits of a to the left n times
  * 
@@ -72,7 +71,7 @@ void big_uint_print(const uint32_t *value, size_t len);
  * @param len The number of digits in the shiftee
  * @param n The number of digits to shift left
  */
-void big_uint_shl(uint32_t *result, const uint32_t *a, size_t len, size_t n);
+void big_uint_shl(uint32_t *result, const uint32_t *a, size_t n, size_t len);
 
 /**
  * @brief Shifts the digits of a to the right n times
@@ -82,7 +81,7 @@ void big_uint_shl(uint32_t *result, const uint32_t *a, size_t len, size_t n);
  * @param len The number of digits in the shiftee
  * @param n The number of digits to shift right
  */
-void big_uint_shr(uint32_t *result, const uint32_t *a, size_t len, size_t n);
+void big_uint_shr(uint32_t *result, const uint32_t *a, size_t n, size_t len);
 
 /**
  * @brief Shifts the bits of a to the left n times
@@ -92,7 +91,7 @@ void big_uint_shr(uint32_t *result, const uint32_t *a, size_t len, size_t n);
  * @param len The number of digits in the shiftee
  * @param n The number of bits to shift left
  */
-void big_uint_shl2(uint32_t *result, const uint32_t *a, size_t len, size_t n);
+void big_uint_shl2(uint32_t *result, const uint32_t *a, size_t n,  size_t len);
 
 /**
  * @brief Shifts the bits of a to the right n times
@@ -102,7 +101,7 @@ void big_uint_shl2(uint32_t *result, const uint32_t *a, size_t len, size_t n);
  * @param len The number of digits in the shiftee
  * @param n The number of bits to shift right
  */
-void big_uint_shr2(uint32_t *result, const uint32_t *a, size_t len, size_t n);
+void big_uint_shr2(uint32_t *result, const uint32_t *a, size_t n,  size_t len);
 
 /**
  * @brief Performs a bitwise OR operation on a and b and stores the result in result

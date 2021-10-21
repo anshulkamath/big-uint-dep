@@ -99,7 +99,7 @@ void big_uint_print(const uint32_t *value, size_t len) {
     printf("%s\n", str);
 }
 
-void big_uint_shl(uint32_t *result, const uint32_t *a, size_t len, size_t n) {
+void big_uint_shl(uint32_t *result, const uint32_t *a, size_t n, size_t len) {
     // if n >= len, we are overshifting, and result should be 0
     if (n >= len) {
         memset(result, 0, sizeof(uint32_t) * len);
@@ -118,7 +118,7 @@ void big_uint_shl(uint32_t *result, const uint32_t *a, size_t len, size_t n) {
         result[i] = (i + n) < len ? a[i + n] : 0;
 }
 
-void big_uint_shr(uint32_t *result, const uint32_t *a, size_t len, size_t n) {    
+void big_uint_shr(uint32_t *result, const uint32_t *a, size_t n, size_t len) {    
     // if n >= len, we are overshifting, and result should be 0
     if (n >= len) {
         memset(result, 0, sizeof(uint32_t) * len);
@@ -140,7 +140,7 @@ void big_uint_shr(uint32_t *result, const uint32_t *a, size_t len, size_t n) {
         result[i] = ((int) i - (int) n) >=  0 ? a_cpy[i - n] : 0;
 }
 
-void big_uint_shl2(uint32_t *result, const uint32_t *a, size_t len, size_t n) {
+void big_uint_shl2(uint32_t *result, const uint32_t *a, size_t n, size_t len) {
     // if we are overshifting the result should be 0
     if (n >= len * BITS_32) {
         memset(result, 0, sizeof(uint32_t) * len);
@@ -148,7 +148,7 @@ void big_uint_shl2(uint32_t *result, const uint32_t *a, size_t len, size_t n) {
     }
 
     // first we shift left the number of digits possible
-    big_uint_shl(result, a, len, n / BITS_32);
+    big_uint_shl(result, a, n / BITS_32, len);
 
     // if we shift by a multiple of 32, we are done after the digit shift
     if (n % BITS_32 == 0) return;
@@ -163,7 +163,7 @@ void big_uint_shl2(uint32_t *result, const uint32_t *a, size_t len, size_t n) {
     }
 }
 
-void big_uint_shr2(uint32_t *result, const uint32_t *a, size_t len, size_t n) {
+void big_uint_shr2(uint32_t *result, const uint32_t *a, size_t n, size_t len) {
     // if we are overshifting the result should be 0
     if (n >= len * BITS_32) {
         memset(result, 0, sizeof(uint32_t) * len);
@@ -171,7 +171,7 @@ void big_uint_shr2(uint32_t *result, const uint32_t *a, size_t len, size_t n) {
     }
 
     // first we shift right the number of digits possible
-    big_uint_shr(result, a, len, n / BITS_32);
+    big_uint_shr(result, a, n / BITS_32, len);
 
     // if we shift by a multiple of 32, we are done after the digit shift
     if (n % BITS_32 == 0) return;
@@ -275,11 +275,11 @@ void big_uint_div(uint32_t *q, uint32_t *r, const uint32_t *u, const uint32_t *v
 
     for (int i = len * sizeof(uint32_t) * 8 - 1; i >= 0; i--) {
         // q <<= 1
-        big_uint_shl2(q, q, len, 1);
+        big_uint_shl2(q, q, 1, len);
 
         // (r <<= 1) |= ((u >> i) & 0b1)
-        big_uint_shr2(temp, u, len, i);
-        big_uint_shl2(r, r, len, 1);
+        big_uint_shr2(temp, u, i, len);
+        big_uint_shl2(r, r, 1, len);
         big_uint_and(temp, temp, one, len);
         big_uint_or(r, r, temp, len);
 
