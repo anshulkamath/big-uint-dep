@@ -5,7 +5,7 @@
 #include <string.h>
 
 // helper function
-static void print_binary(uint32_t num) {
+/* static void print_binary(uint32_t num) {
     for (int i = 31; i >= 0; i--) {
         if (i % 4 == 3) printf(" ");
         printf("%d", (num >> i) & 1);
@@ -15,7 +15,7 @@ static void print_binary(uint32_t num) {
 
 static void print_hex(uint32_t num) {
     printf("%08x\n", num);
-}
+} */
 
 int big_uint_equals(const uint32_t *a, const uint32_t *b, size_t len) {
     for (size_t i = 0; i < len; i++)
@@ -159,6 +159,21 @@ void big_uint_shr2(uint32_t *result, const uint32_t *a, size_t len, size_t n) {
         shifted = result[i] << (BITS_32 - shift);
         result[i] = (result[i] >> shift) | temp;
     }
+}
+
+void big_uint_or(uint32_t *result, const uint32_t *a, const uint32_t *b, size_t len) {
+    for (size_t i = 0; i < len; i++)
+        result[i] = a[i] | b[i];
+}
+
+void big_uint_and(uint32_t *result, const uint32_t *a, const uint32_t *b, size_t len) {
+    for (size_t i = 0; i < len; i++)
+        result[i] = a[i] & b[i];
+}
+
+void big_uint_xor(uint32_t *result, const uint32_t *a, const uint32_t *b, size_t len) {
+    for (size_t i = 0; i < len; i++)
+        result[i] = a[i] ^ b[i];
 }
 
 void big_uint_add(uint32_t *result, const uint32_t *a, const uint32_t *b, size_t len) {

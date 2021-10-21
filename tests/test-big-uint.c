@@ -357,6 +357,199 @@ void test_big_uint_shr2() {
     log_tests(tester);
 }
 
+void test_big_uint_or() {
+    // Define variables to be tested with
+    testing_logger_t *tester = create_tester();
+    uint32_t result[5] = { 0 };
+
+    // Single digit test (no carry, no underflow)
+    const uint32_t a1[] = { 0x11110000 };
+    const uint32_t b1[] = { 0x00002222 };
+    const uint32_t expected1[] = { 0x11112222 };
+    big_uint_or(result, a1, b1, 1);
+
+    expect(tester, big_uint_equals(result, expected1, 1));
+
+    const uint32_t a2[] = { 0xffffffff };
+    const uint32_t b2[] = { 0x00000000 };
+    const uint32_t expected2[] = { 0xffffffff };
+    big_uint_or(result, a2, b2, 1);
+
+    expect(tester, big_uint_equals(result, expected2, 1));
+
+    const uint32_t a3[] = { 0x00000000 };
+    const uint32_t b3[] = { 0xffffffff };
+    const uint32_t expected3[] = { 0xffffffff };
+    big_uint_or(result, a3, b3, 1);
+
+    expect(tester, big_uint_equals(result, expected3, 1));
+
+    const uint32_t a4[] = { 0xffffffff, 0x00000000 };
+    const uint32_t b4[] = { 0x00000000, 0xffffffff };
+    const uint32_t expected4[] = { 0xffffffff, 0xffffffff };
+    big_uint_or(result, a4, b4, 1);
+
+    expect(tester, big_uint_equals(result, expected4, 1));
+
+    const uint32_t a5[] = { 0xffff0000, 0xffff0000 };
+    const uint32_t b5[] = { 0x0000ffff, 0x0000ffff };
+    const uint32_t expected5[] = { 0xffffffff, 0xffffffff };
+    big_uint_or(result, a5, b5, 1);
+
+    expect(tester, big_uint_equals(result, expected5, 1));
+
+    const uint32_t a6[] = { 0x12345678, 0x12345678 };
+    const uint32_t b6[] = { 0x12345678, 0x12345678 };
+    const uint32_t expected6[] = { 0x12345678, 0x12345678 };
+    big_uint_or(result, a6, b6, 1);
+
+    expect(tester, big_uint_equals(result, expected6, 1));
+
+    const uint32_t a7[] = { 0x87654321, 0x12345678 };
+    big_uint_or(result, a7, a7, 1);
+
+    expect(tester, big_uint_equals(result, a7, 1));
+
+    // or-equals
+    uint32_t a8[] = { 0xffff0000, 0xffff0000 };
+    const uint32_t b8[] = { 0x0000ffff, 0x0000ffff };
+    const uint32_t expected8[] = { 0xffffffff, 0xffffffff };
+    big_uint_or(a8, a8, b8, 1);
+
+    expect(tester, big_uint_equals(a8, expected8, 1));
+
+    log_tests(tester);
+}
+
+void test_big_uint_and() {
+    // Define variables to be tested with
+    testing_logger_t *tester = create_tester();
+    uint32_t result[5] = { 0 };
+
+    // Single digit test (no carry, no underflow)
+    const uint32_t a1[] = { 0x11110000 };
+    const uint32_t b1[] = { 0x00002222 };
+    const uint32_t expected1[] = { 0x00000000 };
+    big_uint_and(result, a1, b1, 1);
+
+    expect(tester, big_uint_equals(result, expected1, 1));
+
+    const uint32_t a2[] = { 0xffffffff };
+    const uint32_t b2[] = { 0x12345678 };
+    const uint32_t expected2[] = { 0x12345678 };
+    big_uint_and(result, a2, b2, 1);
+
+    expect(tester, big_uint_equals(result, expected2, 1));
+
+    const uint32_t a3[] = { 0x12345678 };
+    const uint32_t b3[] = { 0xffffffff };
+    const uint32_t expected3[] = { 0x12345678 };
+    big_uint_and(result, a3, b3, 1);
+
+    expect(tester, big_uint_equals(result, expected3, 1));
+
+    const uint32_t a4[] = { 0xffffffff, 0x87654321 };
+    const uint32_t b4[] = { 0x12345678, 0xffffffff };
+    const uint32_t expected4[] = { 0x12345678, 0x87654321 };
+    big_uint_and(result, a4, b4, 1);
+
+    expect(tester, big_uint_equals(result, expected4, 1));
+
+    const uint32_t a5[] = { 0xffff0000, 0xffff0000 };
+    const uint32_t b5[] = { 0x0000ffff, 0x0000ffff };
+    const uint32_t expected5[] = { 0x00000000, 0x00000000 };
+    big_uint_and(result, a5, b5, 1);
+
+    expect(tester, big_uint_equals(result, expected5, 1));
+
+    const uint32_t a6[] = { 0x12345678, 0x12345678 };
+    const uint32_t b6[] = { 0x12345678, 0x12345678 };
+    const uint32_t expected6[] = { 0x12345678, 0x12345678 };
+    big_uint_and(result, a6, b6, 1);
+
+    expect(tester, big_uint_equals(result, expected6, 1));
+
+    const uint32_t a7[] = { 0x87654321, 0x12345678 };
+    big_uint_and(result, a7, a7, 1);
+
+    expect(tester, big_uint_equals(result, a7, 1));
+
+    // and-equals
+    uint32_t a8[] = { 0xffffffff, 0x87654321 };
+    const uint32_t b8[] = { 0x12345678, 0xffffffff };
+    const uint32_t expected8[] = { 0x12345678, 0x87654321 };
+    big_uint_and(a8, a8, b8, 1);
+
+    expect(tester, big_uint_equals(a8, expected8, 1));
+
+    log_tests(tester);
+}
+
+void test_big_uint_xor() {
+    // Define variables to be tested with
+    testing_logger_t *tester = create_tester();
+    uint32_t result[5] = { 0 };
+
+    // Single digit test (no carry, no underflow)
+    const uint32_t a1[] = { 0xffff0000 };
+    const uint32_t b1[] = { 0x0000ffff };
+    const uint32_t expected1[] = { 0xffffffff };
+    big_uint_xor(result, a1, b1, 1);
+
+    expect(tester, big_uint_equals(result, expected1, 1));
+
+    const uint32_t a2[] = { 0xffffffff };
+    const uint32_t b2[] = { 0x00000000 };
+    const uint32_t expected2[] = { 0xffffffff };
+    big_uint_xor(result, a2, b2, 1);
+
+    expect(tester, big_uint_equals(result, expected2, 1));
+
+    const uint32_t a3[] = { 0x00000000 };
+    const uint32_t b3[] = { 0x00000000 };
+    const uint32_t expected3[] = { 0x00000000 };
+    big_uint_xor(result, a3, b3, 1);
+
+    expect(tester, big_uint_equals(result, expected3, 1));
+
+    const uint32_t a4[] = { 0xffffffff, 0x00000000 };
+    const uint32_t b4[] = { 0x00000000, 0xffffffff };
+    const uint32_t expected4[] = { 0xffffffff, 0xffffffff };
+    big_uint_xor(result, a4, b4, 1);
+
+    expect(tester, big_uint_equals(result, expected4, 1));
+
+    const uint32_t a5[] = { 0xffff0000, 0xffffffff };
+    const uint32_t b5[] = { 0xffffffff, 0x0000ffff };
+    const uint32_t expected5[] = { 0x0000ffff, 0xffff0000 };
+    big_uint_xor(result, a5, b5, 1);
+
+    expect(tester, big_uint_equals(result, expected5, 1));
+
+    const uint32_t a6[] = { 0x12345678, 0x12345678 };
+    const uint32_t b6[] = { 0x12345678, 0x12345678 };
+    const uint32_t expected6[] = { 0x00000000, 0x00000000 };
+    big_uint_xor(result, a6, b6, 1);
+
+    expect(tester, big_uint_equals(result, expected6, 1));
+
+    const uint32_t a7[] = { 0x87654321, 0x12345678 };
+    const uint32_t expected7[] = { 0x00000000, 0x00000000 };
+    big_uint_xor(result, a7, a7, 1);
+
+    expect(tester, big_uint_equals(result, expected7, 1));
+
+    // xor-equals
+    uint32_t a8[] = { 0xffff0000, 0xffffffff };
+    const uint32_t b8[] = { 0xffffffff, 0x0000ffff };
+    const uint32_t expected8[] = { 0x0000ffff, 0xffff0000 };
+    big_uint_xor(a8, a8, b8, 1);
+
+    expect(tester, big_uint_equals(a8, expected8, 1));
+
+    log_tests(tester);
+}
+
 void test_big_uint_add() {
     // Define variables to be tested with
     testing_logger_t *tester = create_tester();
@@ -893,6 +1086,9 @@ int main() {
     test_big_uint_shr();
     test_big_uint_shl2();
     test_big_uint_shr2();
+    test_big_uint_or();
+    test_big_uint_and();
+    test_big_uint_xor();
     test_big_uint_add();
     test_big_uint_sub();
     test_big_uint_mult();

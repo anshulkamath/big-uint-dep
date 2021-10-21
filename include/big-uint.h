@@ -105,6 +105,36 @@ void big_uint_shl2(uint32_t *result, const uint32_t *a, size_t len, size_t n);
 void big_uint_shr2(uint32_t *result, const uint32_t *a, size_t len, size_t n);
 
 /**
+ * @brief Performs a bitwise OR operation on a and b and stores the result in result
+ * 
+ * @param result Where the result is stored
+ * @param a The first number to OR
+ * @param b The second numbre to OR
+ * @param len The number of digits in both numbers
+ */
+void big_uint_or(uint32_t *result, const uint32_t *a, const uint32_t *b, size_t len);
+
+/**
+ * @brief Performs a bitwise AND operation on a and b and stores the result in result
+ * 
+ * @param result Where the result is stored
+ * @param a The first number to AND
+ * @param b The second numbre to AND
+ * @param len The number of digits in both numbers
+ */
+void big_uint_and(uint32_t *result, const uint32_t *a, const uint32_t *b, size_t len);
+
+/**
+ * @brief Performs a bitwise XOR operation on a and b and stores the result in result
+ * 
+ * @param result Where the result is stored
+ * @param a The first number to XOR
+ * @param b The second numbre to XOR
+ * @param len The number of digits in both numbers
+ */
+void big_uint_xor(uint32_t *result, const uint32_t *a, const uint32_t *b, size_t len);
+
+/**
  * @brief Calculates the sum a + b and writes it to result.
  * @note If the sum results in overflow, returns sum mod 2^n,
  *       where n is the number of bits in the integer
