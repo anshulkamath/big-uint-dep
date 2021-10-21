@@ -239,6 +239,13 @@ void test_big_uint_shl() {
 
     expect(tester, big_uint_equals(a6, expected6, 2));
 
+    // no shift
+    const uint32_t a7[] = { 0xffffffff, 0xfffffffe };
+    const uint32_t expected7[] = { 0xffffffff, 0xfffffffe};
+    big_uint_shl(result, a7, 2, 0);
+
+    expect(tester, big_uint_equals(result, expected7, 2));
+
     log_tests(tester);
 }
 
@@ -281,6 +288,13 @@ void test_big_uint_shr() {
     big_uint_shr(a5, a5, 2, 1);
 
     expect(tester, big_uint_equals(a5, expected5, 2));
+
+    // no shift
+    const uint32_t a6[] = { 0xffffffff, 0xfffffffe };
+    const uint32_t expected6[] = { 0xffffffff, 0xfffffffe};
+    big_uint_shr(result, a6, 2, 0);
+
+    expect(tester, big_uint_equals(result, expected6, 2));
 
     log_tests(tester);
 }
@@ -339,6 +353,19 @@ void test_big_uint_shl2() {
 
     expect(tester, big_uint_equals(a7, expected7, 2));
 
+    // no shift
+    const uint32_t a8[] = { 0xffffffff, 0xfffffffe };
+    const uint32_t expected8[] = { 0xffffffff, 0xfffffffe};
+    big_uint_shl2(result, a8, 2, 0);
+
+    expect(tester, big_uint_equals(result, expected8, 2));
+
+    const uint32_t a9[] = { 0x41763a5f, 0x991b4b60, 0x84285b8e };
+    const uint32_t expected9[] = { 0x991b4b60, 0x84285b8e, 0x00000000 };
+    big_uint_shl2(result, a9, 32, 3);
+
+    expect(tester, big_uint_equals(result, expected9, 3));
+
     log_tests(tester);
 }
 
@@ -381,6 +408,19 @@ void test_big_uint_shr2() {
     big_uint_shr2(a5, a5, 2, 38);
 
     expect(tester, big_uint_equals(a5, expected5, 2));
+
+    // no shift
+    const uint32_t a6[] = { 0xffffffff, 0xfffffffe };
+    const uint32_t expected6[] = { 0xffffffff, 0xfffffffe};
+    big_uint_shr2(result, a6, 2, 0);
+
+    expect(tester, big_uint_equals(result, expected6, 2));
+
+    const uint32_t a7[] = { 0x41763a5f, 0x991b4b60, 0x84285b8e };
+    const uint32_t expected7[] = { 0x00000000, 0x41763a5f, 0x991b4b60 };
+    big_uint_shr2(result, a7, 32, 3);
+
+    expect(tester, big_uint_equals(result, expected7, 3));
 
     log_tests(tester);
 }
@@ -445,6 +485,14 @@ void test_big_uint_or() {
     big_uint_or(a8, a8, b8, 1);
 
     expect(tester, big_uint_equals(a8, expected8, 1));
+
+    // or-equals
+    uint32_t a9[] = {0x00000000, 0x00000000 };
+    const uint32_t b9[] = { 0x00000000, 0x00000001 };
+    const uint32_t expected9[] = { 0x00000000, 0x000000001 };
+    big_uint_or(a9, a9, b9, 1);
+
+    expect(tester, big_uint_equals(a9, expected9, 1));
 
     log_tests(tester);
 }
@@ -850,14 +898,14 @@ void test_big_uint_div() {
     expect(tester, big_uint_equals(remainders, expected_remainder2, 1));
 
     // padded 1 digit division (no truncation)
-    const uint32_t a3[] = { 0x0, 0x00000010 };
-    const uint32_t b3[] = { 0x0, 0x00000002 };
+    const uint32_t a3[] = { 0x0000000, 0x00000010 };
+    const uint32_t b3[] = { 0x0000000, 0x00000002 };
     const uint32_t expected_quotient3[] = { 0x00000000, 0x00000008 };
     const uint32_t expected_remainder3[] = { 0x00000000, 0x00000000 };
     big_uint_div(quotients, remainders, a3, b3, 2);
 
-    expect(tester, big_uint_equals(quotients, expected_quotient3, 1));
-    expect(tester, big_uint_equals(remainders, expected_remainder3, 1));
+    expect(tester, big_uint_equals(quotients, expected_quotient3, 2));
+    expect(tester, big_uint_equals(remainders, expected_remainder3, 2));
 
     // 1 digit division (truncation)
     const uint32_t a4[] = { 0x00000009 };
@@ -876,8 +924,8 @@ void test_big_uint_div() {
     const uint32_t expected_remainder5[] = { 0x00000000, 0x00000000 };
     big_uint_div(quotients, remainders, a5, b5, 2);
 
-    expect(tester, big_uint_equals(quotients, expected_quotient5, 1));
-    expect(tester, big_uint_equals(remainders, expected_remainder5, 1));
+    expect(tester, big_uint_equals(quotients, expected_quotient5, 2));
+    expect(tester, big_uint_equals(remainders, expected_remainder5, 2));
 
     // 2 digit division (no truncation)
     const uint32_t a6[] = { 0x00000009, 0x00000000 };
@@ -886,8 +934,8 @@ void test_big_uint_div() {
     const uint32_t expected_remainder6[] = { 0x00000000, 0x00000000 };
     big_uint_div(quotients, remainders, a6, b6, 2);
 
-    expect(tester, big_uint_equals(quotients, expected_quotient6, 1));
-    expect(tester, big_uint_equals(remainders, expected_remainder6, 1));
+    expect(tester, big_uint_equals(quotients, expected_quotient6, 2));
+    expect(tester, big_uint_equals(remainders, expected_remainder6, 2));
 
     // large number over itself + 1
     const uint32_t a7[] = { 0xffffffff, 0xfffffffe };
@@ -896,8 +944,8 @@ void test_big_uint_div() {
     const uint32_t expected_remainder7[] = { 0xffffffff, 0xfffffffe };
     big_uint_div(quotients, remainders, a7, b7, 2);
 
-    expect(tester, big_uint_equals(quotients, expected_quotient7, 1));
-    expect(tester, big_uint_equals(remainders, expected_remainder7, 1));
+    expect(tester, big_uint_equals(quotients, expected_quotient7, 2));
+    expect(tester, big_uint_equals(remainders, expected_remainder7, 2));
 
     // large number over itself - 1
     const uint32_t a8[] = { 0xffffffff, 0xffffffff };
@@ -906,8 +954,8 @@ void test_big_uint_div() {
     const uint32_t expected_remainder8[] = { 0x00000000, 0x00000001 };
     big_uint_div(quotients, remainders, a8, b8, 2);
 
-    expect(tester, big_uint_equals(quotients, expected_quotient8, 1));
-    expect(tester, big_uint_equals(remainders, expected_remainder8, 1));
+    expect(tester, big_uint_equals(quotients, expected_quotient8, 2));
+    expect(tester, big_uint_equals(remainders, expected_remainder8, 2));
 
     // 3 digit number divided by 1 digit number
     const uint32_t a9[] = { 0x12345678, 0x9abcdeff, 0xffffffff };
@@ -916,8 +964,8 @@ void test_big_uint_div() {
     const uint32_t expected_remainder9[] = { 0x00000000, 0x0000000, 0x0000f12f };
     big_uint_div(quotients, remainders, a9, b9, 3);
 
-    expect(tester, big_uint_equals(quotients, expected_quotient9, 1));
-    expect(tester, big_uint_equals(remainders, expected_remainder9, 1));
+    expect(tester, big_uint_equals(quotients, expected_quotient9, 3));
+    expect(tester, big_uint_equals(remainders, expected_remainder9, 3));
 
     // random number
     const uint32_t a10[] = { 0x00efa9af, 0x3619a918 };
@@ -926,18 +974,28 @@ void test_big_uint_div() {
     const uint32_t expected_remainder10[] = { 0x00000c42, 0xeb3d5d4c };
     big_uint_div(quotients, remainders, a10, b10, 2);
 
-    expect(tester, big_uint_equals(quotients, expected_quotient10, 1));
-    expect(tester, big_uint_equals(remainders, expected_remainder10, 1));
+    expect(tester, big_uint_equals(quotients, expected_quotient10, 2));
+    expect(tester, big_uint_equals(remainders, expected_remainder10, 2));
 
     // forced 1 by 2
-    const uint32_t a11[] = { 0x000100000, 0x00000000 };
-    const uint32_t b11[] = { 0x000000000, 0xf0000000 };
-    const uint32_t expected_quotient11[] = { 0x000000000, 0x00111111 };
+    const uint32_t a11[] = { 0x00100000, 0x00000000 };
+    const uint32_t b11[] = { 0x00000000, 0xf0000000 };
+    const uint32_t expected_quotient11[] = { 0x00000000, 0x00111111 };
     const uint32_t expected_remainder11[] = { 0x00000000, 0x10000000 };
     big_uint_div(quotients, remainders, a11, b11, 2);
 
-    expect(tester, big_uint_equals(quotients, expected_quotient11, 1));
-    expect(tester, big_uint_equals(remainders, expected_remainder11, 1));
+    expect(tester, big_uint_equals(quotients, expected_quotient11, 2));
+    expect(tester, big_uint_equals(remainders, expected_remainder11, 2));
+
+    // misc test
+    const uint32_t a12[] = { 0x41763a5f, 0x991b4b60, 0x84285b8e };
+    const uint32_t b12[] = { 0x126d0ba2, 0x278b1be0, 0x1eb138e3 };
+    const uint32_t expected_quotient12[] = { 0x00000000, 0x00000000, 0x00000003 };
+    const uint32_t expected_remainder12[] = { 0x0a2f1779, 0x2279f7c0, 0x2814b0e5 };
+    big_uint_div(quotients, remainders, a12, b12, 3);
+
+    expect(tester, big_uint_equals(quotients, expected_quotient12, 3));
+    expect(tester, big_uint_equals(remainders, expected_remainder12, 3));
 
     log_tests(tester);
 }

@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#define BITS_32 32
+
 // helper function
 /* static void print_binary(uint32_t num) {
     for (int i = 31; i >= 0; i--) {
@@ -104,23 +106,35 @@ void big_uint_shl(uint32_t *result, const uint32_t *a, size_t len, size_t n) {
         return;
     }
 
+    // if we are not shifting, then return the same element
+    if (n == 0) {
+        memcpy(result, a, len * sizeof(uint32_t));
+        return;
+    }
+
     // do not need to work in temporary variable r[i] depends on a[i + k],
     // so we are not corrupting data that we need
     for (size_t i = 0; i < len; i++)
         result[i] = (i + n) < len ? a[i + n] : 0;
 }
 
-void big_uint_shr(uint32_t *result, const uint32_t *a, size_t len, size_t n) {
-    // work in temporary variable to allow for operator assignment
-    // this is because r[i] depends on a[i - k], which will have already changed
-    uint32_t a_cpy[len];
-    memcpy(a_cpy, a, sizeof(uint32_t) * len);
-    
+void big_uint_shr(uint32_t *result, const uint32_t *a, size_t len, size_t n) {    
     // if n >= len, we are overshifting, and result should be 0
     if (n >= len) {
         memset(result, 0, sizeof(uint32_t) * len);
         return;
     }
+
+    // return the same number if we are not shifting
+    if (n == 0) {
+        memcpy(result, a, len * sizeof(uint32_t));
+        return;
+    }
+
+    // work in temporary variable to allow for operator assignment
+    // this is because r[i] depends on a[i - k], which will have already changed
+    uint32_t a_cpy[len];
+    memcpy(a_cpy, a, sizeof(uint32_t) * len);
 
     for (size_t i = 0; i < len; i++)
         result[i] = ((int) i - (int) n) >=  0 ? a_cpy[i - n] : 0;
@@ -128,7 +142,6 @@ void big_uint_shr(uint32_t *result, const uint32_t *a, size_t len, size_t n) {
 
 void big_uint_shl2(uint32_t *result, const uint32_t *a, size_t len, size_t n) {
     // if we are overshifting the result should be 0
-    const uint8_t BITS_32 = 8 * sizeof(uint32_t);
     if (n >= len * BITS_32) {
         memset(result, 0, sizeof(uint32_t) * len);
         return;
@@ -136,6 +149,9 @@ void big_uint_shl2(uint32_t *result, const uint32_t *a, size_t len, size_t n) {
 
     // first we shift left the number of digits possible
     big_uint_shl(result, a, len, n / BITS_32);
+
+    // if we shift by a multiple of 32, we are done after the digit shift
+    if (n % BITS_32 == 0) return;
 
     size_t shift = n % BITS_32;
     uint32_t shifted = 0;
@@ -149,7 +165,6 @@ void big_uint_shl2(uint32_t *result, const uint32_t *a, size_t len, size_t n) {
 
 void big_uint_shr2(uint32_t *result, const uint32_t *a, size_t len, size_t n) {
     // if we are overshifting the result should be 0
-    const uint8_t BITS_32 = 8 * sizeof(uint32_t);
     if (n >= len * BITS_32) {
         memset(result, 0, sizeof(uint32_t) * len);
         return;
@@ -157,6 +172,9 @@ void big_uint_shr2(uint32_t *result, const uint32_t *a, size_t len, size_t n) {
 
     // first we shift right the number of digits possible
     big_uint_shr(result, a, len, n / BITS_32);
+
+    // if we shift by a multiple of 32, we are done after the digit shift
+    if (n % BITS_32 == 0) return;
 
     size_t shift = n % BITS_32;
     uint32_t shifted = 0;
@@ -241,72 +259,38 @@ void big_uint_mult(uint32_t* result, const uint32_t *a, const uint32_t *b, size_
     memcpy(result, (product + len), len * sizeof(uint32_t));
 }
 
-static uint32_t big_uint_div_helper(uint32_t *a, const uint32_t *b, uint32_t *r, size_t len) {
-    size_t start_a = (size_t) -1;
-
-    // resetting output vars
-    memset(r, 0, len * sizeof(uint32_t));
-    
-    // calculate the start indexes
-    while (!a[++start_a]);
-
-    // 1x1 case
-    if (start_a == len - 1) {
-        r[len - 1] = a[start_a] % b[start_a];
-        return a[start_a] / b[start_a];
-    }
-
-    // get the approximation
-    uint64_t curr_dividend = ((uint64_t) a[start_a] << 32) + a[start_a + 1];
-    uint64_t curr_divisor = ((uint64_t) b[start_a] << 32) + b[start_a + 1];
-    uint32_t estimate[len];
-
-    uint32_t approx[len];
-    memset(approx, 0, len * sizeof(uint32_t));
-
-    // upper bound on a/b
-    uint64_t quotient = curr_dividend / curr_divisor;
-    approx[len - 2] = quotient >> 32;
-    approx[len - 1] = (uint32_t) quotient;
-
-    // get an estimate on quotient * divisor < dividend
-    big_uint_mult(estimate, approx, b, len);
-
-    // should only happen twice
-    while (big_uint_cmp(estimate, a, len) > 0) {
-        big_uint_sub(estimate, estimate, b, len);
-
-        --quotient;
-    }
-
-    // can only get one digit out of quotient.
-    // if two digits were possible, could have divided earlier
-    big_uint_sub(r, a, estimate, len);
-
-    return quotient;
-}
-
 void big_uint_div(uint32_t *q, uint32_t *r, const uint32_t *u, const uint32_t *v, size_t len) {
     // Handling divide by 0
     if (v[len - 1] == 0) return;
 
     uint32_t temp[len];
+    uint32_t one[len];
 
     memset(q, 0, len * sizeof(uint32_t));
     memset(r, 0, len * sizeof(uint32_t));
+    memset(temp, 0, len * sizeof(uint32_t));
+    memset(one, 0, len * sizeof(uint32_t));
 
-    for (size_t i = 0; i < len; i++) {
-        big_uint_shl(q, q, len, 1);
-        big_uint_shl(r, r, len, 1);
-        r[len - 1] = u[i];
+    one[len - 1] = 1;
 
-        // if the divisor is greater than the current remainder, shift another element
+    for (int i = len * sizeof(uint32_t) * 8 - 1; i >= 0; i--) {
+        // q <<= 1
+        big_uint_shl2(q, q, len, 1);
+
+        // (r <<= 1) |= ((u >> i) & 0b1)
+        big_uint_shr2(temp, u, len, i);
+        big_uint_shl2(r, r, len, 1);
+        big_uint_and(temp, temp, one, len);
+        big_uint_or(r, r, temp, len);
+
+        // if the divisor > remainder, shift another element
         if (big_uint_cmp(v, r, len) > 0) continue;
+        
+        // q |= 1
+        big_uint_or(q, q, one, len);
 
-        // divide temp by q (helper function)
-        memset(temp, 0, len * sizeof(uint32_t));
-        q[len - 1] = big_uint_div_helper(r, v, temp, len);
-        memcpy(r, temp, len * sizeof(uint32_t));
+        // r -= v
+        big_uint_sub(r, r, v, len);
     }
 }
 
