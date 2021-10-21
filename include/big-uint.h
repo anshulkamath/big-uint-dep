@@ -25,6 +25,15 @@ int big_uint_equals(const uint32_t *a, const uint32_t *b, size_t len);
 int big_uint_cmp(const uint32_t *a, const uint32_t *b, size_t len);
 
 /**
+ * @brief Copies the src big integer into the destination big integer
+ * 
+ * @param dest Where to copy src to
+ * @param src The big integer to copy
+ * @param len The number of digits in src
+ */
+void big_uint_cpy(uint32_t *dest, uint32_t *src, size_t len);
+
+/**
  * @brief Returns a pointer to max(a, b). If a == b, returns a
  * 
  * @param a The first number to comparee

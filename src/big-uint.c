@@ -34,6 +34,10 @@ int big_uint_cmp(const uint32_t *a, const uint32_t *b, size_t len) {
     return 0;
 }
 
+void big_uint_cpy(uint32_t *dest, uint32_t *src, size_t len) {
+    memcpy(dest, src, len * sizeof(uint32_t));
+}
+
 uint32_t* big_uint_max(uint32_t *a, size_t len_a, uint32_t *b, size_t len_b) {
     size_t offset_a = 0;
     size_t offset_b = 0;

@@ -53,6 +53,24 @@ void test_big_uint_cmp() {
     log_tests(tester);
 }
 
+void test_big_uint_cpy() {
+    // Define variables to be tested with
+    testing_logger_t *tester = create_tester();
+    uint32_t result[5];
+
+    uint32_t a1[] = { 0x12345678 };
+    big_uint_cpy(result, a1, 1);
+
+    expect(tester, big_uint_equals(a1, result, 1));
+
+    uint32_t a2[] = { 0x12345678, 0x87654321 };
+    big_uint_cpy(result, a2, 2);
+
+    expect(tester, big_uint_equals(a2, result, 2));
+
+    log_tests(tester);
+}
+
 void test_big_uint_sprint() {
     // Define variables to be tested with
     testing_logger_t *tester = create_tester();
@@ -1189,6 +1207,7 @@ void test_big_uint_gcd_extended() {
 int main() {
     test_big_uint_equals();
     test_big_uint_cmp();
+    test_big_uint_cpy();
     test_big_uint_sprint();
     test_big_uint_max();
     test_big_uint_min();
