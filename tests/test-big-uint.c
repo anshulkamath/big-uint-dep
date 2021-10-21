@@ -232,6 +232,13 @@ void test_big_uint_shl() {
 
     expect(tester, big_uint_equals(result, expected5, 2));
 
+    // operator assignment
+    uint32_t a6[] = { 0x00abcdef, 0x12345678 };
+    const uint32_t expected6[] = { 0x12345678, 0x00000000 };
+    big_uint_shl(a6, a6, 2, 1);
+
+    expect(tester, big_uint_equals(a6, expected6, 2));
+
     log_tests(tester);
 }
 
@@ -268,6 +275,13 @@ void test_big_uint_shr() {
 
     expect(tester, big_uint_equals(result, expected4, 2));
 
+    // operator assignment
+    uint32_t a5[] = { 0xffffffff, 0xeeeeeeee };
+    const uint32_t expected5[] = { 0x00000000, 0xffffffff };
+    big_uint_shr(a5, a5, 2, 1);
+
+    expect(tester, big_uint_equals(a5, expected5, 2));
+
     log_tests(tester);
 }
 
@@ -298,7 +312,7 @@ void test_big_uint_shl2() {
     expect(tester, big_uint_equals(result, expected3, 1));
 
     // shift by 1 carry
-    const uint32_t a4[] = { 0x00000001, 0xffffffff };
+    uint32_t a4[] = { 0x00000001, 0xffffffff };
     const uint32_t expected4[] = { 0x00000003, 0xfffffffe };
     big_uint_shl2(result, a4, 2, 1);
 
@@ -317,6 +331,13 @@ void test_big_uint_shl2() {
     big_uint_shl2(result, a6, 2, 38);
 
     expect(tester, big_uint_equals(result, expected6, 2));
+
+    // operator assignment
+    uint32_t a7[] = { 0x00abcdef, 0x12345678 };
+    const uint32_t expected7[] = { 0x8d159e00, 0x00000000 };
+    big_uint_shl2(a7, a7, 2, 38);
+
+    expect(tester, big_uint_equals(a7, expected7, 2));
 
     log_tests(tester);
 }
@@ -353,6 +374,13 @@ void test_big_uint_shr2() {
     big_uint_shr2(result, a4, 2, 38);
 
     expect(tester, big_uint_equals(result, expected4, 2));
+
+    // operator assignment
+    uint32_t a5[] = { 0x00abcdef, 0x12345678 };
+    const uint32_t expected5[] = { 0x00000000, 0x00002af37 };
+    big_uint_shr2(a5, a5, 2, 38);
+
+    expect(tester, big_uint_equals(a5, expected5, 2));
 
     log_tests(tester);
 }
@@ -632,6 +660,14 @@ void test_big_uint_add() {
     big_uint_add(result, a10, a10, 2);
 
     expect(tester, big_uint_equals(result, expected10, 2));
+
+    // operator assignment
+    uint32_t a11[] = { 0x00000000, 0xffff0000, 0xffffffff };
+    const uint32_t b11[] = { 0x00000000, 0x0000ffff, 0x00000001 };
+    const uint32_t expected11[] = { 0x1, 0x00000000, 0x00000000 };
+    big_uint_add(a11, a11, b11, 3);
+
+    expect(tester, big_uint_equals(a11, expected11, 3));
     
     log_tests(tester);
 }
@@ -696,6 +732,14 @@ void test_big_uint_sub() {
     big_uint_sub(result, a7, b7, 2);
 
     expect(tester, big_uint_equals(result, expected7, 2));
+
+    // operator assignment
+    uint32_t a8[] = { 0x00000000, 0x00000000 };
+    const uint32_t b8[] = { 0x00000000, 0x00000001 };
+    const uint32_t expected8[] = { 0xffffffff, 0xffffffff };
+    big_uint_sub(a8, a8, b8, 2);
+
+    expect(tester, big_uint_equals(a8, expected8, 2));
 
     log_tests(tester);
 }
@@ -768,6 +812,14 @@ void test_big_uint_mult() {
     big_uint_mult(result, a8, b8, 2);
 
     expect(tester, big_uint_equals(result, expected8, 2));
+
+    // operator assignment
+    uint32_t a9[] = { 0x00000000, 0x31f596dc };
+    const uint32_t b9[] = { 0x00000000, 0x0000fedc };
+    const uint32_t expected9[] = { 0x000031bc, 0x9abbed10 };
+    big_uint_mult(a9, a9, b9, 2);
+
+    expect(tester, big_uint_equals(a9, expected9, 2));
 
     log_tests(tester);
 }

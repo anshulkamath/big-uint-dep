@@ -104,11 +104,18 @@ void big_uint_shl(uint32_t *result, const uint32_t *a, size_t len, size_t n) {
         return;
     }
 
+    // do not need to work in temporary variable r[i] depends on a[i + k],
+    // so we are not corrupting data that we need
     for (size_t i = 0; i < len; i++)
         result[i] = (i + n) < len ? a[i + n] : 0;
 }
 
 void big_uint_shr(uint32_t *result, const uint32_t *a, size_t len, size_t n) {
+    // work in temporary variable to allow for operator assignment
+    // this is because r[i] depends on a[i - k], which will have already changed
+    uint32_t a_cpy[len];
+    memcpy(a_cpy, a, sizeof(uint32_t) * len);
+    
     // if n >= len, we are overshifting, and result should be 0
     if (n >= len) {
         memset(result, 0, sizeof(uint32_t) * len);
@@ -116,7 +123,7 @@ void big_uint_shr(uint32_t *result, const uint32_t *a, size_t len, size_t n) {
     }
 
     for (size_t i = 0; i < len; i++)
-        result[i] = ((int) i - (int) n) >=  0 ? a[i - n] : 0;
+        result[i] = ((int) i - (int) n) >=  0 ? a_cpy[i - n] : 0;
 }
 
 void big_uint_shl2(uint32_t *result, const uint32_t *a, size_t len, size_t n) {
@@ -177,18 +184,26 @@ void big_uint_xor(uint32_t *result, const uint32_t *a, const uint32_t *b, size_t
 }
 
 void big_uint_add(uint32_t *result, const uint32_t *a, const uint32_t *b, size_t len) {
+    // work in temporary variable to allow for operator assignment
+    uint32_t a_cpy[len];
+    memcpy(a_cpy, a, sizeof(uint32_t) * len);
+
     uint8_t carry = 0;
     for (int i = len - 1; i >= 0; i--) {
-        result[i] = a[i] + b[i] + carry;
-        carry = (uint64_t) a[i] + b[i] + carry > UINT32_MAX; // determine if overflow occurred
+        result[i] = a_cpy[i] + b[i] + carry;
+        carry = (uint64_t) a_cpy[i] + b[i] + carry > UINT32_MAX; // determine if overflow occurred
     }
 }
 
 void big_uint_sub(uint32_t *result, const uint32_t *a, const uint32_t *b, size_t len) {
+    // work in temporary variable to allow for operator assignment
+    uint32_t a_cpy[len];
+    memcpy(a_cpy, a, sizeof(uint32_t) * len);
+
     size_t carry = 0;
     for (int i = len - 1; i >= 0; i--) {
-        result[i] = a[i] - b[i] - carry;
-        carry = (uint64_t) a[i] - b[i] - carry > UINT32_MAX; // determine if underflow occurred
+        result[i] = a_cpy[i] - b[i] - carry;
+        carry = (uint64_t) a_cpy[i] - b[i] - carry > UINT32_MAX; // determine if underflow occurred
     }
 }
 
