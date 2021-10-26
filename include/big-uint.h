@@ -3,10 +3,6 @@
 
 #include <stdlib.h>
 
-// ---------------------------- //
-//     Comparison Functions     //
-// ---------------------------- //
-
 /**
  * @brief Returns true if and only if the two big uints are equal
  * 
@@ -27,6 +23,15 @@ int big_uint_equals(const uint32_t *a, const uint32_t *b, size_t len);
  * @return int 1, 0, and -1 if a > b, a == b, and a < b, respectively.
  */
 int big_uint_cmp(const uint32_t *a, const uint32_t *b, size_t len);
+
+/**
+ * @brief Copies the src big integer into the destination big integer
+ * 
+ * @param dest Where to copy src to
+ * @param src The big integer to copy
+ * @param len The number of digits in src
+ */
+void big_uint_cpy(uint32_t *dest, uint32_t *src, size_t len);
 
 /**
  * @brief Returns a pointer to max(a, b). If a == b, returns a
@@ -50,32 +55,6 @@ uint32_t* big_uint_max(uint32_t *a, size_t len_a, uint32_t *b, size_t len_b);
  */
 uint32_t* big_uint_min(uint32_t *a, size_t len_a, uint32_t *b, size_t len_b);
 
-// ----------------------------- //
-//       Memory Management       //
-// ----------------------------- //
-
-/**
- * @brief Copies the src big integer into the destination big integer
- * 
- * @param dest Where to copy src to
- * @param src The big integer to copy
- * @param len The number of digits in src
- */
-void big_uint_cpy(uint32_t *dest, uint32_t *src, size_t len);
-
-/**
- * @brief Swaps the big uint pointed to by a with the big uint pointed to by b
- * 
- * @param a The first element to swap
- * @param b The second element to swap
- * @param len The number of digits in a and b
- */
-void big_uint_swap(uint32_t *a, uint32_t *b, size_t len);
-
-// ------------------------------ //
-//       Exporting Big Ints       //
-// ------------------------------ //
-
 /**
  * @brief Writes the hex representation fo the given value to the given char*
  * 
@@ -92,10 +71,6 @@ void big_uint_sprint(char *dest, const uint32_t *value, size_t len);
  * @param len The number of digits in the integer
  */
 void big_uint_print(const uint32_t *value, size_t len);
-
-// -------------------------------- //
-//        Bit-wise operations       //
-// -------------------------------- //
 
 /**
  * @brief Shifts the digits of a to the left n times
@@ -167,10 +142,6 @@ void big_uint_and(uint32_t *result, const uint32_t *a, const uint32_t *b, size_t
  */
 void big_uint_xor(uint32_t *result, const uint32_t *a, const uint32_t *b, size_t len);
 
-// -------------------------------- //
-//      Mathematical Operations     //
-// -------------------------------- //
-
 /**
  * @brief Calculates the sum a + b and writes it to result.
  * @note If the sum results in overflow, returns sum mod 2^n,
@@ -218,10 +189,6 @@ void big_uint_mult(uint32_t *result, const uint32_t *a, const uint32_t *b, size_
  * @param len The number of digits
  */
 void big_uint_div(uint32_t *q, uint32_t *r, const uint32_t *u, const uint32_t *v, size_t len);
-
-// -------------------------------- //
-//         Number Theory Ops        //
-// -------------------------------- //
 
 /**
  * @brief Calculates the gcd of big uints a and b as gcd(a, b) = d

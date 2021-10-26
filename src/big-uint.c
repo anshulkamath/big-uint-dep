@@ -6,9 +6,7 @@
 
 #define BITS_32 32
 
-// ---------------------------- //
-//       Helper Functions       //
-// ---------------------------- //
+// helper function
 /* static void print_binary(uint32_t num) {
     for (int i = 31; i >= 0; i--) {
         if (i % 4 == 3) printf(" ");
@@ -20,10 +18,6 @@
 static void print_hex(uint32_t num) {
     printf("%08x\n", num);
 } */
-
-// ---------------------------- //
-//     Comparison Functions     //
-// ---------------------------- //
 
 int big_uint_equals(const uint32_t *a, const uint32_t *b, size_t len) {
     for (size_t i = 0; i < len; i++)
@@ -38,6 +32,10 @@ int big_uint_cmp(const uint32_t *a, const uint32_t *b, size_t len) {
     }
 
     return 0;
+}
+
+void big_uint_cpy(uint32_t *dest, uint32_t *src, size_t len) {
+    memcpy(dest, src, len * sizeof(uint32_t));
 }
 
 uint32_t* big_uint_max(uint32_t *a, size_t len_a, uint32_t *b, size_t len_b) {
@@ -92,25 +90,6 @@ uint32_t* big_uint_min(uint32_t *a, size_t len_a, uint32_t *b, size_t len_b) {
     return a;
 }
 
-// ----------------------------- //
-//       Memory Management       //
-// ----------------------------- //
-
-void big_uint_cpy(uint32_t *dest, uint32_t *src, size_t len) {
-    memcpy(dest, src, len * sizeof(uint32_t));
-}
-
-void big_uint_swap(uint32_t *a, uint32_t *b, size_t len) {
-    uint32_t temp[len];
-    memcpy(temp, a, len * sizeof(uint32_t));
-    memcpy(a, b, len * sizeof(uint32_t));
-    memcpy(b, temp, len * sizeof(uint32_t));
-}
-
-// ------------------------------ //
-//       Exporting Big Ints       //
-// ------------------------------ //
-
 void big_uint_sprint(char *dest, const uint32_t *value, size_t len) {
     for (size_t i = 0; i < len; i++) {
         if (i == 0) sprintf(&dest[0], "%08x", value[i]);
@@ -123,10 +102,6 @@ void big_uint_print(const uint32_t *value, size_t len) {
     big_uint_sprint(str, value, len);
     printf("%s\n", str);
 }
-
-// -------------------------------- //
-//        Bit-wise operations       //
-// -------------------------------- //
 
 void big_uint_shl(uint32_t *result, const uint32_t *a, size_t n, size_t len) {
     // if n >= len, we are overshifting, and result should be 0
@@ -230,10 +205,6 @@ void big_uint_xor(uint32_t *result, const uint32_t *a, const uint32_t *b, size_t
         result[i] = a[i] ^ b[i];
 }
 
-// -------------------------------- //
-//     Mathematical Operations      //
-// -------------------------------- //
-
 void big_uint_add(uint32_t *result, const uint32_t *a, const uint32_t *b, size_t len) {
     // work in temporary variable to allow for operator assignment
     uint32_t a_cpy[len];
@@ -313,22 +284,19 @@ void big_uint_div(uint32_t *q, uint32_t *r, const uint32_t *u, const uint32_t *v
         // (r <<= 1) |= ((u >> i) & 0b1)
         big_uint_shr2(temp, u, i, len);
         big_uint_shl2(r, r, 1, len);
-        r[len - 1] |= (temp[len - 1] & 1);
+        big_uint_and(temp, temp, one, len);
+        big_uint_or(r, r, temp, len);
 
         // if the divisor > remainder, shift another element
         if (big_uint_cmp(v, r, len) > 0) continue;
         
         // q |= 1
-        q[len - 1] |= 1;
+        big_uint_or(q, q, one, len);
 
         // r -= v
         big_uint_sub(r, r, v, len);
     }
 }
-
-// -------------------------------- //
-//         Number Theory Ops        //
-// -------------------------------- //
 
 // helper function for the recursive gcd algorithm
 static void big_uint_gcd_helper(uint32_t *d, const uint32_t *a, const uint32_t *b, const uint32_t *zero, size_t len) {
@@ -357,6 +325,14 @@ void big_uint_gcd(uint32_t *d, const uint32_t *a_init, const uint32_t *b_init, s
     memset(zero, 0, len * sizeof(uint32_t));
     
     big_uint_gcd_helper(d, a, b, zero, len);
+}
+
+// swaps the big uint pointed to by a with the big uint pointed to by b
+static void big_uint_swap(uint32_t *a, uint32_t *b, size_t len) {
+    uint32_t temp[len];
+    memcpy(temp, a, len * sizeof(uint32_t));
+    memcpy(a, b, len * sizeof(uint32_t));
+    memcpy(b, temp, len * sizeof(uint32_t));
 }
 
 static void big_uint_gcd_extended_helper(uint32_t* x, uint32_t *y, const uint32_t *a, const uint32_t *b, const uint32_t *zero, size_t len) {
