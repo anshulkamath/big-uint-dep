@@ -9,11 +9,15 @@
 // ---------------------------- //
 //       Helper Functions       //
 // ---------------------------- //
-/* static void print_binary(uint32_t num) {
-    for (int i = 31; i >= 0; i--) {
-        if (i % 4 == 3) printf(" ");
-        printf("%d", (num >> i) & 1);
+/* static void print_binary(const uint32_t *input, size_t len) {
+    for (size_t digit = 0; digit < len; digit++) {
+        for (int i = 31; i >= 0; i--) {
+            if (i % 4 == 3) printf(" ");
+            printf("%d", (input[digit] >> i) & 1);
+        }
+        printf("\t");
     }
+
     printf("\n");
 }
 
@@ -231,6 +235,25 @@ void big_uint_xor(uint32_t *result, const uint32_t *a, const uint32_t *b, size_t
 }
 
 // -------------------------------- //
+//        Helper Functions          //
+// -------------------------------- //
+
+/**
+ * @brief Returns the ((input >> i) & 0b1)
+ * 
+ * @param input The input to read
+ * @param bit The bit number to get
+ * @param len The number of digits in the input
+ * @return uint8_t The value of ((input >> i) & 0b1)
+ */
+static uint8_t big_uint_get_bit(const uint32_t *input, size_t i, size_t len) {
+    size_t ind = (len - 1) - (i / BITS_32);
+    size_t shift = i % BITS_32;
+
+    return (input[ind] >> shift) & 1;
+}
+
+// -------------------------------- //
 //     Mathematical Operations      //
 // -------------------------------- //
 
@@ -296,24 +319,16 @@ void big_uint_div(uint32_t *q, uint32_t *r, const uint32_t *u, const uint32_t *v
     // Handling divide by 0
     if (v[len - 1] == 0) return;
 
-    uint32_t temp[len];
-    uint32_t one[len];
-
     memset(q, 0, len * sizeof(uint32_t));
     memset(r, 0, len * sizeof(uint32_t));
-    memset(temp, 0, len * sizeof(uint32_t));
-    memset(one, 0, len * sizeof(uint32_t));
-
-    one[len - 1] = 1;
 
     for (int i = len * sizeof(uint32_t) * 8 - 1; i >= 0; i--) {
         // q <<= 1
         big_uint_shl2(q, q, 1, len);
 
         // (r <<= 1) |= ((u >> i) & 0b1)
-        big_uint_shr2(temp, u, i, len);
         big_uint_shl2(r, r, 1, len);
-        r[len - 1] |= (temp[len - 1] & 1);
+        r[len - 1] |= big_uint_get_bit(u, i, len);
 
         // if the divisor > remainder, shift another element
         if (big_uint_cmp(v, r, len) > 0) continue;
