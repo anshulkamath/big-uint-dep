@@ -2,6 +2,7 @@ import math
 import random
 
 test_file = ''
+func_names = []
 
 def generate_random_number(num_digits):
     ''' generates a random number with the given number of digits '''
@@ -32,14 +33,20 @@ def create_indexer():
         yield i
         i += 1
 
+def initialize_test(file_name, libs):
+    ''' creates a new file to hold all tests '''
+    with open(file_name, 'w+', newline='') as out:
+        for lib in libs:
+            out.write(f'#include {lib}\n')
+        
+        out.write('\n')
+
 def test_creator(file_name, function_name, results=['result']):
     ''' generator to create and write skeleton of test '''
-    global test_file
-    test_file = file_name
+    func_names.append(f'test_{function_name}')
 
-    # create a new file for the generated test output
-    with open(test_file, 'w+', newline='') as out:
-        out.write(f'void test_{function_name}() {{\n')
+    with open(file_name, 'a', newline='') as out:
+        out.write(f'void {func_names[-1]}() {{\n')
         out.write('\ttesting_logger_t *tester = create_tester();\n')
         for result in results:
             out.write(f'\tuint32_t {result}[5] = {{ 0 }};\n')
@@ -47,8 +54,19 @@ def test_creator(file_name, function_name, results=['result']):
 
     yield
 
-    with open(test_file, 'a', newline='') as out:
+    with open(file_name, 'a', newline='') as out:
         out.write('\tlog_tests(tester);\n')
-        out.write('}\n')
+        out.write('}\n\n')
 
     yield
+
+def test_closer(file_name):
+    ''' generator that creates the main function to call all tests '''
+    with open(file_name, 'a', newline='') as out:
+        out.write(f'int main() {{\n')
+        out.write(f'\t// Calling all tests:\n')
+        for func in func_names:
+            out.write(f'\t{func}();\n')
+        
+        out.write('\n\treturn 1;\n')
+        out.write('}\n')
