@@ -1,4 +1,29 @@
+import math
+import random
+
 test_file = ''
+
+def generate_random_number(num_digits):
+    ''' generates a random number with the given number of digits '''
+    return random.randint(0, 1 << (32 * num_digits))
+
+def get_num_digits(n):
+    ''' takes in an integer n and returns the number of 32-bit digits in n '''
+    return math.ceil(len(hex(n)[2:]) / 8)
+
+def format_int(num, num_digits):
+    ''' formats the given number into a C initializer list '''
+    hex_repr = hex(num)[2:]
+    expected_len = num_digits * 8
+
+    if len(hex_repr) < expected_len:
+        hex_repr = (expected_len - len(hex_repr)) * '0' + hex_repr
+
+    ret_str = ''
+    for i in range(num_digits):
+        ret_str += '0x' + hex_repr[i * 8:(i + 1) * 8] + ', '
+
+    return f'{{ {ret_str[:-2]} }}'
 
 def create_indexer():
     ''' generator to maintain index '''
