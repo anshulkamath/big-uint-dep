@@ -4,6 +4,33 @@
 #include <stdlib.h>
 #include "big-uint.h"
 
+#define N_MAX 32    // maximum number of digits
+
+typedef struct mod {
+    uint32_t            k;  // k-value in barrett reduction
+    size_t            len;  // number of digits in p
+    uint32_t p[2 * N_MAX];  // pointer to prime number
+    uint32_t r[2 * N_MAX];  // r-value in barrett reduction
+} mod_t;
+
+/**
+ * @brief Returns a mod_t that results from Barrett Reduction
+ * 
+ * @param p The prime that is used to calculate r
+ * @param len The number of digits in p
+ * @return mod_t 
+ */
+mod_t mod_init(const uint32_t *p, size_t len);
+
+/**
+ * @brief Calculates the pre-computation factor r in Barrett reduction 
+ * 
+ * @param p The prime to use in Barrett reduction
+ * @param r A pointer of where to store the result
+ * @param len The number of digits in p and r
+ */
+void barrett_r(const uint32_t *p, uint32_t *r, size_t len);
+
 /**
  * @brief Takes in a big integer n and puts the result n (mod p) into result
  * 

@@ -144,7 +144,6 @@ def generate_mod_init_test_case(ind, file, func, func_name, num_digits, p=None):
             f'\t);\n'
         )
         out.write('\n')
-    pass
 
 def create_test(file, func, func_name, generate_func, results=['result']):
     ''' creates a test for the given function '''
