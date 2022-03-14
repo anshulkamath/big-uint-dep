@@ -18,6 +18,8 @@ tester.initialize_test(test_file, libs=['"mod.h"\n', '<stdlib.h>', '<stdio.h>', 
 mod_p.create_test(test_file, mod_p.mod_p, 'mod_big_uint', mod_p.generate_unary_test_case)
 mod_p.create_test(test_file, mod_p.mod_addition, 'mod_add', mod_p.generate_binary_test_case)
 mod_p.create_test(test_file, mod_p.mod_subtraction, 'mod_sub', mod_p.generate_binary_test_case)
+mod_p.create_test(test_file, mod_p.mod_init, 'mod_init', mod_p.generate_mod_init_test_case, results=[])
+
 # mod_p.create_test(test_file, mod_p.mod_mult, 'mod_mult', mod_p.generate_binary_test_case)
 # mod_p.create_test(test_file, mod_p.mod_div, 'mod_div', mod_p.generate_binary_test_case)
 

@@ -14,6 +14,9 @@ random.seed(1)
 import test_generator as tester
 import gcd.gcd as gcd
 
+# constants
+SIZE_INT_32 = 32
+
 # 13
 prime0 = 0xD
 
@@ -22,6 +25,9 @@ prime1 = 0x3CFAF13B4C3EB41F
 
 # 8,286,390,253,466,614,501
 prime2 = 0x72FF2C084822FAE5
+
+# ECDSA constant prime
+prime_ecdsa = 0XFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F
 
 def mod_p(n, p):
     ''' takes in a big integer n and an big prime p and returns n mod p '''
@@ -35,16 +41,21 @@ def mod_subtraction(m, n, p):
     ''' calculates m - n (mod p) '''
     return (m - n) % p
 
-def mod_mult(m, n, p):
-    ''' calculates m * n (mod p) using Barrett Reduction '''
+def mod_init(p, len):
+    ''' creates a mod_t from a prime p '''
     k = 0
+    num_digits = len
 
     # calculate ceil(log_2 p)
-    while ((1 << k) < p): k += 1
-    k *= 2 # calculate 4^k
-    
-    # calculate Barrett coefficient
+    while ((1 << k) < p): k += SIZE_INT_32
+
     r = (1 << (2 * k)) // p
+
+    return [k, 2 * num_digits + 1, p, r]
+
+def mod_mult(m, n, p, mod_t):
+    ''' calculates m * n (mod p) using Barrett Reduction '''
+    [k, _, p, r] = mod_t
 
     x = m * n
     t = x - ((x * r) >> (2 * k)) * p
@@ -107,12 +118,41 @@ def generate_binary_test_case(ind, file, func, func_name, num_digits, m = None, 
         out.write(f'\texpect(tester, big_uint_equals(expected{ind}, result, {num_digits}));\n')
         out.write('\n')
 
-def create_test(file, func, func_name, generate_func):
+def generate_mod_init_test_case(ind, file, func, func_name, num_digits, p=None):
+    ''' generates a test case for the mod_init function '''
+    if not p:
+        p = random.choice([prime0, prime1, prime2])
+
+    [k, n_p, p, r] = func(p, num_digits)
+
+    with open(file, 'a', newline='') as out:
+        out.write(f'\t// Test {ind}\n')
+        out.write(f'\tconst uint32_t p{ind}[] = {tester.format_int(p, num_digits)};\n')
+        out.write(f'\tconst uint32_t expected_k{ind} = {k // SIZE_INT_32};\n')
+        out.write(f'\tconst size_t expected_digits{ind} = {num_digits};\n')
+        out.write(f'\tconst uint32_t expected_p{ind}[] = {tester.format_int(p, n_p)};\n')
+        out.write(f'\tconst uint32_t expected_r{ind}[] = {tester.format_int(r, n_p)};\n')
+        out.write('\n')
+        out.write(f'\tconst mod_t result_mod{ind} = {func_name}(p{ind}, {num_digits});\n')
+        out.write('\n')
+        out.write(
+            f'\texpect(tester, \n' +
+            f'\t\texpected_k{ind} == result_mod{ind}.k &&\n' +
+            f'\t\texpected_digits{ind} == result_mod{ind}.len &&\n' +
+            f'\t\tbig_uint_equals(expected_p{ind}, result_mod{ind}.p, {n_p}) &&\n' +
+            f'\t\tbig_uint_equals(expected_r{ind}, result_mod{ind}.r, {n_p})\n' +
+            f'\t);\n'
+        )
+        out.write('\n')
+    pass
+
+def create_test(file, func, func_name, generate_func, results=['result']):
     ''' creates a test for the given function '''
     indexer = tester.create_indexer()
     test_creator = tester.test_creator(
         file,
         func_name,
+        results=results
     )
 
     next(test_creator)
