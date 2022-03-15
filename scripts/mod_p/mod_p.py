@@ -145,6 +145,33 @@ def generate_mod_init_test_case(ind, file, func, func_name, num_digits, p=None):
         )
         out.write('\n')
 
+def generate_mult_test_case(ind, file, func, func_name, num_digits, p=None, m=None, n=None):
+    ''' generates a test case for modular multiplication '''
+    if not p:
+        p = random.choice([prime0, prime1, prime2])
+
+    if not n:
+        n = tester.generate_random_number(num_digits) % p
+    
+    if not m:
+        m = tester.generate_random_number(num_digits) % p
+    
+    # calculate the product of m and n mod p
+    res = func(m, n, p, mod_init(p, num_digits))
+
+    with open(file, 'a', newline='') as out:
+        out.write(f'\t// Test {ind}\n')
+        out.write(f'\tconst uint32_t m{ind}[] = {tester.format_int(m, num_digits)};\n')
+        out.write(f'\tconst uint32_t n{ind}[] = {tester.format_int(n, num_digits)};\n')
+        out.write(f'\tconst uint32_t p{ind}[] = {tester.format_int(p, num_digits)};\n')
+        out.write(f'\tconst mod_t    mod{ind} = mod_init(p{ind}, {num_digits});\n')
+        out.write(f'\tconst uint32_t expected{ind}[] = {tester.format_int(res, num_digits)};\n')
+        out.write('\n')
+        out.write(f'\t{func_name}(result, m{ind}, n{ind}, &mod{ind}, {num_digits});\n')
+        out.write('\n')
+        out.write(f'\texpect(tester, big_uint_equals(expected{ind}, result, {num_digits}));\n')
+        out.write('\n')
+
 def create_test(file, func, func_name, generate_func, results=['result']):
     ''' creates a test for the given function '''
     indexer = tester.create_indexer()
