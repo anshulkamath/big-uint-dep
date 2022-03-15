@@ -43,7 +43,7 @@ void mod_sub(uint32_t *result, const uint32_t *a, const uint32_t *b, const uint3
         big_uint_add(result, result, p, len);
 }
 
-// private function to calculate barrett reduction
+// function to calculate barrett reduction
 void barret_r(uint32_t *r, const uint32_t *p, size_t k, size_t len) {
     const size_t NEW_LEN = 2 * len + 1;
     uint32_t temp[NEW_LEN];
@@ -95,4 +95,48 @@ mod_t mod_init(const uint32_t *p, size_t len) {
     barret_r(res.r, p, k, len);
 
     return res;
+}
+
+void mod_mult(uint32_t* result, const uint32_t* a, const uint32_t* b, const mod_t *mod, size_t len) {
+    size_t x_len = 2 * len;
+    uint32_t x[x_len];
+    memset(x, 0, x_len * UINT_BYTES);
+
+    uint32_t a_cpy[x_len];
+    uint32_t b_cpy[x_len];
+
+    big_uint_extend(a_cpy, x_len, a, len);
+    big_uint_extend(b_cpy, x_len, b, len);
+
+    // compute x = a * b
+    big_uint_mult(x, a_cpy, b_cpy, x_len);
+
+    // extend x to fit r
+    size_t x_len_p = x_len + 1;
+    uint32_t x_p[x_len];
+    big_uint_extend(x_p, x_len_p, x, x_len);
+
+    // compute t = x - floor(x * r / 4^k) * p
+    size_t t_len = 2 * ((2 * mod->len) + 1);
+    uint32_t t[t_len];
+    memset(t, 0, t_len * UINT_BYTES);
+
+    uint32_t x_ext[t_len];
+    uint32_t p_ext[t_len];
+    uint32_t r_ext[t_len];
+    big_uint_extend(x_ext, t_len, x, x_len);
+    big_uint_extend(p_ext, t_len, mod->p, x_len_p);
+    big_uint_extend(r_ext, t_len, mod->r, x_len_p);
+
+    big_uint_mult(t, x_ext, r_ext, t_len);  // compute x * r
+    big_uint_shr(t, t, 2 * mod->k, t_len);  // compute floor(x * r / 4^k)
+    big_uint_mult(t, t, p_ext, t_len);      // compute floor(x * r / 4^k) * p
+    big_uint_sub(t, x_ext, t, t_len);       // compute x - floor(x * r / 4^k) * p
+
+    if (big_uint_cmp(t, p_ext, t_len) > 0)
+        big_uint_sub(t, t, p_ext, t_len);
+
+    // copy t into the result
+    size_t elem_no = t_len - len;
+    memcpy(result, t + elem_no, len * UINT_BYTES);
 }

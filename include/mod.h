@@ -64,15 +64,15 @@ void mod_add(uint32_t* result, const uint32_t* a, const uint32_t* b, const uint3
 void mod_sub(uint32_t* result, const uint32_t* a, const uint32_t* b, const uint32_t* p, size_t len);
 
 /**
- * @brief Computes a * b (mod p) and puts the sum into result
+ * @brief Computes a * b (mod p) and puts the product into result
  * 
  * @param result A pointer to where to store the modular product
  * @param a The first integer to multiply
  * @param b The second integer to multiply
- * @param p The prime we are modding out by
+ * @param mod The mod struct initialized with the barrett reduction precomputation factor
  * @param len The number of digits in a, b, and p
  */
-void mod_mult(uint32_t* result, const uint32_t* a, const uint32_t* b, const uint32_t* p, size_t len);
+void mod_mult(uint32_t* result, const uint32_t* a, const uint32_t* b, const mod_t *mod, size_t len);
 
 /**
  * @brief Calculates the multiplicative inverse of n modulo p
