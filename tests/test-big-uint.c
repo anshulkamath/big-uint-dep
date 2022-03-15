@@ -735,6 +735,13 @@ void test_big_uint_add() {
 
     expect(tester, big_uint_equals(a11, expected11, 3));
     
+    const uint32_t a12[] = { 0x00000000, 0xffff0000, 0xffffffff };
+    uint32_t b12[] = { 0x00000000, 0x0000ffff, 0x00000001 };
+    const uint32_t expected12[] = { 0x1, 0x00000000, 0x00000000 };
+    big_uint_add(b12, a12, b12, 3);
+
+    expect(tester, big_uint_equals(b12, expected12, 3));
+    
     log_tests(tester);
 }
 
@@ -806,6 +813,13 @@ void test_big_uint_sub() {
     big_uint_sub(a8, a8, b8, 2);
 
     expect(tester, big_uint_equals(a8, expected8, 2));
+
+    const uint32_t a9[] = { 0x00000000, 0x00000000 };
+    uint32_t b9[] = { 0x00000000, 0x00000001 };
+    const uint32_t expected9[] = { 0xffffffff, 0xffffffff };
+    big_uint_sub(b9, a9, b9, 2);
+
+    expect(tester, big_uint_equals(b9, expected9, 2));
 
     log_tests(tester);
 }
