@@ -72,6 +72,15 @@ void big_uint_cpy(uint32_t *dest, uint32_t *src, size_t len);
  */
 void big_uint_swap(uint32_t *a, uint32_t *b, size_t len);
 
+/**
+ * @brief Loads a constant uint32_t into the lowest bit of a big integer
+ * 
+ * @param dest Where to store the new big integer
+ * @param val The constant to load into the LSB
+ * @param len The number of digits in the big integer
+ */
+void big_uint_load(uint32_t *dest, uint32_t val, size_t len);
+
 // ------------------------------ //
 //       Exporting Big Ints       //
 // ------------------------------ //
