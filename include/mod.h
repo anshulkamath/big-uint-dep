@@ -90,10 +90,10 @@ void mod_exp(uint32_t *result, const uint32_t *x, const uint32_t *e, const mod_t
  * 
  * @param result A pointer to where to store the modular inverse
  * @param x The integer we are finding the inverse of
- * @param p The prime p of the field we are in
+ * @param mod The mod struct initialized with the barrett reduction precomputation factor
  * @param len The number of digits in x and p
  */
-void mod_inv(uint32_t *result, const uint32_t *x, const uint32_t *p, size_t len);
+void mod_inv(uint32_t *result, const uint32_t *x, const mod_t *mod, size_t len);
 
 /**
  * @brief Calculates the product m * n^{-1} modulo p

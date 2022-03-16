@@ -897,99 +897,110 @@ void test_mod_inv() {
 	// Test 1
 	const uint32_t x1[] = { 0x00000008 };
 	const uint32_t p1[] = { 0x0000000d };
+	const mod_t    mod1 = mod_init(p1, 1);
 	const uint32_t expected1[] = { 0x00000005 };
 
-	mod_inv(result, x1, p1, 1);
+	mod_inv(result, x1, &mod1, 1);
 
 	expect(tester, big_uint_equals(expected1, result, 1));
 
 	// Test 2
 	const uint32_t x2[] = { 0x00000000, 0x00000004 };
 	const uint32_t p2[] = { 0x00000000, 0x0000000d };
+	const mod_t    mod2 = mod_init(p2, 2);
 	const uint32_t expected2[] = { 0x00000000, 0x0000000a };
 
-	mod_inv(result, x2, p2, 2);
+	mod_inv(result, x2, &mod2, 2);
 
 	expect(tester, big_uint_equals(expected2, result, 2));
 
 	// Test 3
 	const uint32_t x3[] = { 0x00000000, 0x00000000, 0x00000009 };
 	const uint32_t p3[] = { 0x00000000, 0x00000000, 0x0000000d };
+	const mod_t    mod3 = mod_init(p3, 3);
 	const uint32_t expected3[] = { 0x00000000, 0x00000000, 0x00000003 };
 
-	mod_inv(result, x3, p3, 3);
+	mod_inv(result, x3, &mod3, 3);
 
 	expect(tester, big_uint_equals(expected3, result, 3));
 
 	// Test 4
 	const uint32_t x4[] = { 0x1151ede8, 0xdd3fccef };
 	const uint32_t p4[] = { 0x3cfaf13b, 0x4c3eb41f };
+	const mod_t    mod4 = mod_init(p4, 2);
 	const uint32_t expected4[] = { 0x18ccb6b8, 0x220d84b3 };
 
-	mod_inv(result, x4, p4, 2);
+	mod_inv(result, x4, &mod4, 2);
 
 	expect(tester, big_uint_equals(expected4, result, 2));
 
 	// Test 5
 	const uint32_t x5[] = { 0x00000000, 0x35c832db, 0xe4da6f81 };
 	const uint32_t p5[] = { 0x00000000, 0x3cfaf13b, 0x4c3eb41f };
+	const mod_t    mod5 = mod_init(p5, 3);
 	const uint32_t expected5[] = { 0x00000000, 0x3784c062, 0x22093e71 };
 
-	mod_inv(result, x5, p5, 3);
+	mod_inv(result, x5, &mod5, 3);
 
 	expect(tester, big_uint_equals(expected5, result, 3));
 
 	// Test 6
 	const uint32_t x6[] = { 0x00000000, 0x3ad812cb, 0x5b3a2a6e };
 	const uint32_t p6[] = { 0x00000000, 0x3cfaf13b, 0x4c3eb41f };
+	const mod_t    mod6 = mod_init(p6, 3);
 	const uint32_t expected6[] = { 0x00000000, 0x259c8967, 0x614846e7 };
 
-	mod_inv(result, x6, p6, 3);
+	mod_inv(result, x6, &mod6, 3);
 
 	expect(tester, big_uint_equals(expected6, result, 3));
 
 	// Test 7
 	const uint32_t x7[] = { 0x00000000, 0x00000000, 0x22705a48, 0x86ee8c1b };
 	const uint32_t p7[] = { 0x00000000, 0x00000000, 0x3cfaf13b, 0x4c3eb41f };
+	const mod_t    mod7 = mod_init(p7, 4);
 	const uint32_t expected7[] = { 0x00000000, 0x00000000, 0x0cc27c7d, 0x8fc86ec0 };
 
-	mod_inv(result, x7, p7, 4);
+	mod_inv(result, x7, &mod7, 4);
 
 	expect(tester, big_uint_equals(expected7, result, 4));
 
 	// Test 8
 	const uint32_t x8[] = { 0x02fceea4, 0x99e75f55 };
 	const uint32_t p8[] = { 0x72ff2c08, 0x4822fae5 };
+	const mod_t    mod8 = mod_init(p8, 2);
 	const uint32_t expected8[] = { 0x514fe566, 0x655409fd };
 
-	mod_inv(result, x8, p8, 2);
+	mod_inv(result, x8, &mod8, 2);
 
 	expect(tester, big_uint_equals(expected8, result, 2));
 
 	// Test 9
 	const uint32_t x9[] = { 0x00000000, 0x5931cc1b, 0xde2bacb0 };
 	const uint32_t p9[] = { 0x00000000, 0x72ff2c08, 0x4822fae5 };
+	const mod_t    mod9 = mod_init(p9, 3);
 	const uint32_t expected9[] = { 0x00000000, 0x54d79891, 0x05010fe8 };
 
-	mod_inv(result, x9, p9, 3);
+	mod_inv(result, x9, &mod9, 3);
 
 	expect(tester, big_uint_equals(expected9, result, 3));
 
 	// Test 10
 	const uint32_t x10[] = { 0x00000000, 0x3edecd5b, 0xb0a7c881 };
 	const uint32_t p10[] = { 0x00000000, 0x72ff2c08, 0x4822fae5 };
+	const mod_t    mod10 = mod_init(p10, 3);
 	const uint32_t expected10[] = { 0x00000000, 0x2bdcbd40, 0xf5d145e1 };
 
-	mod_inv(result, x10, p10, 3);
+	mod_inv(result, x10, &mod10, 3);
 
 	expect(tester, big_uint_equals(expected10, result, 3));
 
 	// Test 11
 	const uint32_t x11[] = { 0x00000000, 0x00000000, 0x5395d075, 0x9c0531cd };
 	const uint32_t p11[] = { 0x00000000, 0x00000000, 0x72ff2c08, 0x4822fae5 };
+	const mod_t    mod11 = mod_init(p11, 4);
 	const uint32_t expected11[] = { 0x00000000, 0x00000000, 0x348e3193, 0x5fb0a534 };
 
-	mod_inv(result, x11, p11, 4);
+	mod_inv(result, x11, &mod11, 4);
 
 	expect(tester, big_uint_equals(expected11, result, 4));
 

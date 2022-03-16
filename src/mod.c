@@ -188,9 +188,9 @@ void mod_exp(uint32_t *result, const uint32_t *x, const uint32_t *e, const mod_t
     memcpy(result, y, len * UINT_BYTES);
 }
 
-void mod_inv(uint32_t *result, const uint32_t *x, const uint32_t *p, size_t len) {
+void mod_inv(uint32_t *result, const uint32_t *x, const mod_t *mod, size_t len) {
     uint32_t p_cpy[len];
-    memcpy(p_cpy, p, len * UINT_BYTES);
+    memcpy(p_cpy, &mod->p[len + 1], len * UINT_BYTES);
 
     uint32_t two[len];
     memset(two, 0, len * UINT_BYTES);
@@ -199,12 +199,11 @@ void mod_inv(uint32_t *result, const uint32_t *x, const uint32_t *p, size_t len)
     // Euler's theorem to find inverse. a^{p-2} = a^{-1} (mod p)
     big_uint_sub(p_cpy, p_cpy, two, len);
     
-    mod_t mod = mod_init(p, len);
-    mod_exp(result, x, p_cpy, &mod, len);
+    mod_exp(result, x, p_cpy, mod, len);
 }
 
 void mod_div(uint32_t *result, const uint32_t *m, const uint32_t *n, const mod_t *mod, size_t len) {
     uint32_t n_inv[len];
-    mod_inv(n_inv, n, &mod->p[len + 1], len);
+    mod_inv(n_inv, n, mod, len);
     mod_mult(result, m, n_inv, mod, len);
 }
