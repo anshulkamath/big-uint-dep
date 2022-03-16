@@ -111,6 +111,11 @@ void big_uint_swap(uint32_t *a, uint32_t *b, size_t len) {
     memcpy(b, temp, len * sizeof(uint32_t));
 }
 
+void big_uint_load(uint32_t *dest, uint32_t val, size_t len) {
+    memset(dest, 0, len * sizeof(uint32_t));
+    dest[len - 1] = val;
+}
+
 // ------------------------------ //
 //       Exporting Big Ints       //
 // ------------------------------ //

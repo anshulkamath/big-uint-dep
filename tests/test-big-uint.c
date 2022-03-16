@@ -71,6 +71,34 @@ void test_big_uint_cpy() {
     log_tests(tester);
 }
 
+void test_big_uint_load() {
+    // Define variables to be tested with
+    testing_logger_t *tester = create_tester();
+    uint32_t result[5];
+
+    uint32_t a1[] = { 0x00000000 };
+    big_uint_load(result, 0, 1);
+
+    expect(tester, big_uint_equals(a1, result, 1));
+
+    uint32_t a2[] = { 0x00000000, 0x00000000 };
+    big_uint_load(result, 0, 2);
+
+    expect(tester, big_uint_equals(a2, result, 2));
+
+    uint32_t a3[] = { 0x00000000, 0x00000005 };
+    big_uint_load(result, 5, 2);
+
+    expect(tester, big_uint_equals(a3, result, 2));
+
+    uint32_t a4[] = { 0x00000000, 0x00000000, 0x12345678 };
+    big_uint_load(result, 0x12345678, 3);
+
+    expect(tester, big_uint_equals(a4, result, 3));
+
+    log_tests(tester);
+}
+
 void test_big_uint_sprint() {
     // Define variables to be tested with
     testing_logger_t *tester = create_tester();
@@ -1208,6 +1236,7 @@ int main() {
     test_big_uint_equals();
     test_big_uint_cmp();
     test_big_uint_cpy();
+    test_big_uint_load();
     test_big_uint_sprint();
     test_big_uint_max();
     test_big_uint_min();
