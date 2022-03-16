@@ -95,4 +95,15 @@ void mod_exp(uint32_t *result, const uint32_t *x, const uint32_t *e, const mod_t
  */
 void mod_inv(uint32_t *result, const uint32_t *x, const uint32_t *p, size_t len);
 
+/**
+ * @brief Calculates the product m * n^{-1} modulo p
+ * 
+ * @param result A pointer to where to store the modular product
+ * @param m The first integer to multiply
+ * @param n The second integer to multiply the inverse of
+ * @param mod The mod struct initialized with the barrett reduction precomputation factor
+ * @param len The number of digits in m, n, and p 
+ */
+void mod_div(uint32_t *result, const uint32_t *m, const uint32_t *n, const mod_t *mod, size_t len);
+
 #endif
