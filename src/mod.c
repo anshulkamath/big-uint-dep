@@ -193,8 +193,7 @@ void mod_inv(uint32_t *result, const uint32_t *x, const mod_t *mod, size_t len) 
     memcpy(p_cpy, &mod->p[len + 1], len * UINT_BYTES);
 
     uint32_t two[len];
-    memset(two, 0, len * UINT_BYTES);
-    two[len - 1] = 2;
+    big_uint_load(two, 2, len);
 
     // Euler's theorem to find inverse. a^{p-2} = a^{-1} (mod p)
     big_uint_sub(p_cpy, p_cpy, two, len);
