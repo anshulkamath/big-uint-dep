@@ -84,6 +84,14 @@ def mod_exp(x, e, mod_t):
     
     return y
 
+def mod_inv(x, mod_t):
+    ''' calculates x^(-1) (mod p) '''
+    [_, _, p, _] = mod_t
+    
+    # Euler's theorem: a^phi(p) = 1 (mod p) --> phi(p) = p - 1
+    # Hence, a^{-1} = a^{p-2}
+    return mod_exp(x, p - 2, mod_t)
+
 def mod_div(m, n, p):
     ''' calculates m * n^(-1) (mod p) '''
     while n == 0:
@@ -257,6 +265,26 @@ def generate_mod_exp_test_case(ind, file, func, func_name, num_digits, p=None, m
         out.write(f'\tconst uint32_t expected{ind}[] = {tester.format_int(res, num_digits)};\n')
         out.write('\n')
         out.write(f'\t{func_name}(result, x{ind}, e{ind}, &mod{ind}, {num_digits});\n')
+        out.write('\n')
+        out.write(f'\texpect(tester, big_uint_equals(expected{ind}, result, {num_digits}));\n')
+        out.write('\n')
+
+def generate_mod_inv_test_case(ind, file, func, func_name, num_digits, n = None, p = None):
+    ''' generates a test case for the mod_p function '''
+    while not n:
+        n = tester.generate_random_number(num_digits) % p
+    if not p:
+        p = random.choice([prime0, prime1, prime2])
+
+    res = func(n, mod_init(p, num_digits))
+
+    with open(file, 'a', newline='') as out:
+        out.write(f'\t// Test {ind}\n')
+        out.write(f'\tconst uint32_t x{ind}[] = {tester.format_int(n, num_digits)};\n')
+        out.write(f'\tconst uint32_t p{ind}[] = {tester.format_int(p, num_digits)};\n')
+        out.write(f'\tconst uint32_t expected{ind}[] = {tester.format_int(res, num_digits)};\n')
+        out.write('\n')
+        out.write(f'\t{func_name}(result, x{ind}, p{ind}, {num_digits});\n')
         out.write('\n')
         out.write(f'\texpect(tester, big_uint_equals(expected{ind}, result, {num_digits}));\n')
         out.write('\n')

@@ -25,6 +25,7 @@ mod_p.create_test(test_file, mod_p.mod_mult, 'mod_mult', mod_p.generate_mult_tes
     (mod_p.generate_mult_test_case_misc, 2, mod_p.prime2)
 ])
 mod_p.create_test(test_file, mod_p.mod_exp, 'mod_exp', mod_p.generate_mod_exp_test_case)
+mod_p.create_test(test_file, mod_p.mod_inv, 'mod_inv', mod_p.generate_mod_inv_test_case)
 
 # mod_p.create_test(test_file, mod_p.mod_div, 'mod_div', mod_p.generate_binary_test_case)
 
