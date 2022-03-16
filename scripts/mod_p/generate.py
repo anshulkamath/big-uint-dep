@@ -21,16 +21,26 @@ test.create_test(test_file, mod.mod_addition, 'mod_add', test.generate_binary_te
 test.create_test(test_file, mod.mod_subtraction, 'mod_sub', test.generate_binary_test_case)
 test.create_test(test_file, mod.mod_init, 'mod_init', test.generate_mod_init_test_case, results=[])
 test.create_test(test_file, mod.mod_mult, 'mod_mult', test.generate_mult_test_case, misc_tests=[
-    (test.generate_mult_test_case_misc, 1, mod.prime0),
-    (test.generate_mult_test_case_misc, 2, mod.prime1),
-    (test.generate_mult_test_case_misc, 2, mod.prime2)
+    (test.generate_mult_op_ass1, 1, mod.prime0),
+    (test.generate_mult_op_ass2, 1, mod.prime0),
+    (test.generate_mult_op_ass1, 2, mod.prime1),
+    (test.generate_mult_op_ass2, 2, mod.prime1),
+    (test.generate_mult_op_ass1, 2, mod.prime2),
+    (test.generate_mult_op_ass2, 2, mod.prime2)
 ])
-test.create_test(test_file, mod.mod_exp, 'mod_exp', test.generate_mod_exp_test_case)
+test.create_test(test_file, mod.mod_exp, 'mod_exp', test.generate_mult_test_case, misc_tests=[
+    (test.generate_mult_op_ass1, 1, mod.prime0),
+    (test.generate_mult_op_ass1, 2, mod.prime1),
+    (test.generate_mult_op_ass1, 2, mod.prime2)
+])
 test.create_test(test_file, mod.mod_inv, 'mod_inv', test.generate_mod_inv_test_case)
 test.create_test(test_file, mod.mod_div, 'mod_div', test.generate_mult_test_case, misc_tests=[
-    (test.generate_mult_test_case_misc, 1, mod.prime0),
-    (test.generate_mult_test_case_misc, 2, mod.prime1),
-    (test.generate_mult_test_case_misc, 2, mod.prime2)
+    (test.generate_mult_op_ass1, 1, mod.prime0),
+    (test.generate_mult_op_ass2, 1, mod.prime0),
+    (test.generate_mult_op_ass1, 2, mod.prime1),
+    (test.generate_mult_op_ass2, 2, mod.prime1),
+    (test.generate_mult_op_ass1, 2, mod.prime2),
+    (test.generate_mult_op_ass2, 2, mod.prime2)
 ])
 
 # call all the tests

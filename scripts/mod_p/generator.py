@@ -112,8 +112,8 @@ def generate_mult_test_case(ind, file, func, func_name, num_digits, p=None, m=No
         out.write(f'\texpect(tester, big_uint_equals(expected{ind}, result, {num_digits}));\n')
         out.write('\n')
 
-def generate_mult_test_case_misc(ind, file, func, func_name, num_digits, p=None, m=None, n=None):
-    ''' additional tests for modular multiplication '''
+def generate_mult_op_ass1(ind, file, func, func_name, num_digits, p=None, m=None, n=None):
+    ''' additional tests for operator assignment. Tests (m = m `opp` n) '''
     if not p:
         p = random.choice([prime0, prime1, prime2])
 
@@ -124,7 +124,7 @@ def generate_mult_test_case_misc(ind, file, func, func_name, num_digits, p=None,
         m = tester.generate_random_number(num_digits) % p
     
     # calculate the product of m and n mod p
-    res = func(m, n, mod_init(p, num_digits))
+    res_a = func(m, n, mod_init(p, num_digits))
 
     with open(file, 'a', newline='') as out:
         out.write(f'\t// Test {ind}a\n')
@@ -133,12 +133,26 @@ def generate_mult_test_case_misc(ind, file, func, func_name, num_digits, p=None,
         out.write(f'\tconst uint32_t n{ind}a[] = {tester.format_int(n, num_digits)};\n')
         out.write(f'\tconst uint32_t p{ind}a[] = {tester.format_int(p, num_digits)};\n')
         out.write(f'\tconst mod_t    mod{ind}a = mod_init(p{ind}a, {num_digits});\n')
-        out.write(f'\tconst uint32_t expected{ind}a[] = {tester.format_int(res, num_digits)};\n')
+        out.write(f'\tconst uint32_t expected{ind}a[] = {tester.format_int(res_a, num_digits)};\n')
         out.write('\n')
         out.write(f'\t{func_name}(m{ind}a, m{ind}a, n{ind}a, &mod{ind}a, {num_digits});\n')
         out.write('\n')
         out.write(f'\texpect(tester, big_uint_equals(expected{ind}a, m{ind}a, {num_digits}));\n')
         out.write('\n')
+
+def generate_mult_op_ass2(ind, file, func, func_name, num_digits, p=None, m=None, n=None):
+    ''' additional tests for operator assignment. Tests (m = n `opp` m) '''
+    if not p:
+        p = random.choice([prime0, prime1, prime2])
+
+    while not n:
+        n = tester.generate_random_number(num_digits) % p
+
+    while not m:
+        m = tester.generate_random_number(num_digits) % p
+    
+    # calculate the product of m and n mod p
+    res_b = func(n, m, mod_init(p, num_digits))
 
     with open(file, 'a', newline='') as out:
         out.write(f'\t// Test {ind}b\n')
@@ -147,7 +161,7 @@ def generate_mult_test_case_misc(ind, file, func, func_name, num_digits, p=None,
         out.write(f'\tconst uint32_t n{ind}b[] = {tester.format_int(n, num_digits)};\n')
         out.write(f'\tconst uint32_t p{ind}b[] = {tester.format_int(p, num_digits)};\n')
         out.write(f'\tconst mod_t    mod{ind}b = mod_init(p{ind}b, {num_digits});\n')
-        out.write(f'\tconst uint32_t expected{ind}b[] = {tester.format_int(res, num_digits)};\n')
+        out.write(f'\tconst uint32_t expected{ind}b[] = {tester.format_int(res_b, num_digits)};\n')
         out.write('\n')
         out.write(f'\t{func_name}(m{ind}b, n{ind}b, m{ind}b, &mod{ind}b, {num_digits});\n')
         out.write('\n')
