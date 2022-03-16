@@ -86,13 +86,13 @@ void mod_mult(uint32_t *result, const uint32_t *a, const uint32_t *b, const mod_
 void mod_exp(uint32_t *result, const uint32_t *x, const uint32_t *e, const mod_t *mod, size_t len);
 
 /**
- * @brief Calculates the multiplicative inverse of n modulo p
+ * @brief Calculates the multiplicative inverse of x modulo p
  * 
  * @param result A pointer to where to store the modular inverse
- * @param n The integer we are finding the inverse of
+ * @param x The integer we are finding the inverse of
  * @param p The prime p of the field we are in
- * @param len The number of digits in n and p
+ * @param len The number of digits in x and p
  */
-void mod_inv(uint32_t *result, const uint32_t *n, const uint32_t *p, size_t len);
+void mod_inv(uint32_t *result, const uint32_t *x, const uint32_t *p, size_t len);
 
 #endif

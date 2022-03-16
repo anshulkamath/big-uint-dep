@@ -187,3 +187,17 @@ void mod_exp(uint32_t *result, const uint32_t *x, const uint32_t *e, const mod_t
     // store result
     memcpy(result, y, len * UINT_BYTES);
 }
+
+void mod_inv(uint32_t *result, const uint32_t *x, const uint32_t *p, size_t len) {
+    uint32_t p_cpy[len];
+    memcpy(p_cpy, p, len * UINT_BYTES);
+
+    uint32_t two[len];
+    memset(two, 0, len * UINT_BYTES);
+    two[len - 1] = 2;
+
+    big_uint_sub(p_cpy, p_cpy, two, len);
+    
+    mod_t mod = mod_init(p, len);
+    mod_exp(result, x, p_cpy, &mod, len);
+}

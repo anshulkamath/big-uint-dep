@@ -854,6 +854,112 @@ void test_mod_exp() {
 	log_tests(tester);
 }
 
+void test_mod_inv() {
+	testing_logger_t *tester = create_tester();
+	uint32_t result[5] = { 0 };
+
+	// Test 1
+	const uint32_t x1[] = { 0x00000003 };
+	const uint32_t p1[] = { 0x0000000d };
+	const uint32_t expected1[] = { 0x00000009 };
+
+	mod_inv(result, x1, p1, 1);
+
+	expect(tester, big_uint_equals(expected1, result, 1));
+
+	// Test 2
+	const uint32_t x2[] = { 0x00000000, 0x00000005 };
+	const uint32_t p2[] = { 0x00000000, 0x0000000d };
+	const uint32_t expected2[] = { 0x00000000, 0x00000008 };
+
+	mod_inv(result, x2, p2, 2);
+
+	expect(tester, big_uint_equals(expected2, result, 2));
+
+	// Test 3
+	const uint32_t x3[] = { 0x00000000, 0x00000000, 0x00000006 };
+	const uint32_t p3[] = { 0x00000000, 0x00000000, 0x0000000d };
+	const uint32_t expected3[] = { 0x00000000, 0x00000000, 0x0000000b };
+
+	mod_inv(result, x3, p3, 3);
+
+	expect(tester, big_uint_equals(expected3, result, 3));
+
+	// Test 4
+	const uint32_t x4[] = { 0x395809fe, 0x17498631 };
+	const uint32_t p4[] = { 0x3cfaf13b, 0x4c3eb41f };
+	const uint32_t expected4[] = { 0x0d86ca1e, 0x9b58c7f7 };
+
+	mod_inv(result, x4, p4, 2);
+
+	expect(tester, big_uint_equals(expected4, result, 2));
+
+	// Test 5
+	const uint32_t x5[] = { 0x00000000, 0x25035410, 0x0269bcbc };
+	const uint32_t p5[] = { 0x00000000, 0x3cfaf13b, 0x4c3eb41f };
+	const uint32_t expected5[] = { 0x00000000, 0x0da6e373, 0xf70480a1 };
+
+	mod_inv(result, x5, p5, 3);
+
+	expect(tester, big_uint_equals(expected5, result, 3));
+
+	// Test 6
+	const uint32_t x6[] = { 0x00000000, 0x02e22380, 0x115a56de };
+	const uint32_t p6[] = { 0x00000000, 0x3cfaf13b, 0x4c3eb41f };
+	const uint32_t expected6[] = { 0x00000000, 0x011e78bf, 0x1ad52679 };
+
+	mod_inv(result, x6, p6, 3);
+
+	expect(tester, big_uint_equals(expected6, result, 3));
+
+	// Test 7
+	const uint32_t x7[] = { 0x00000000, 0x00000000, 0x191dee8a, 0x72a6efe0 };
+	const uint32_t p7[] = { 0x00000000, 0x00000000, 0x3cfaf13b, 0x4c3eb41f };
+	const uint32_t expected7[] = { 0x00000000, 0x00000000, 0x27e4844c, 0x8f065272 };
+
+	mod_inv(result, x7, p7, 4);
+
+	expect(tester, big_uint_equals(expected7, result, 4));
+
+	// Test 8
+	const uint32_t x8[] = { 0x02ae53ef, 0x0f0fd032 };
+	const uint32_t p8[] = { 0x72ff2c08, 0x4822fae5 };
+	const uint32_t expected8[] = { 0x47b896a4, 0xf5fea4b5 };
+
+	mod_inv(result, x8, p8, 2);
+
+	expect(tester, big_uint_equals(expected8, result, 2));
+
+	// Test 9
+	const uint32_t x9[] = { 0x00000000, 0x5058d5ac, 0xd4a4069e };
+	const uint32_t p9[] = { 0x00000000, 0x72ff2c08, 0x4822fae5 };
+	const uint32_t expected9[] = { 0x00000000, 0x5e8c8735, 0x54413a1f };
+
+	mod_inv(result, x9, p9, 3);
+
+	expect(tester, big_uint_equals(expected9, result, 3));
+
+	// Test 10
+	const uint32_t x10[] = { 0x00000000, 0x6d516dc7, 0x67f99faa };
+	const uint32_t p10[] = { 0x00000000, 0x72ff2c08, 0x4822fae5 };
+	const uint32_t expected10[] = { 0x00000000, 0x06627970, 0xf362e300 };
+
+	mod_inv(result, x10, p10, 3);
+
+	expect(tester, big_uint_equals(expected10, result, 3));
+
+	// Test 11
+	const uint32_t x11[] = { 0x00000000, 0x00000000, 0x6ac7f7be, 0x6c1699b5 };
+	const uint32_t p11[] = { 0x00000000, 0x00000000, 0x72ff2c08, 0x4822fae5 };
+	const uint32_t expected11[] = { 0x00000000, 0x00000000, 0x5a9abe05, 0x4dd203e8 };
+
+	mod_inv(result, x11, p11, 4);
+
+	expect(tester, big_uint_equals(expected11, result, 4));
+
+	log_tests(tester);
+}
+
 int main() {
 	// Calling all tests:
 	test_mod_big_uint();
@@ -862,6 +968,7 @@ int main() {
 	test_mod_init();
 	test_mod_mult();
 	test_mod_exp();
+	test_mod_inv();
 
 	return 1;
 }
