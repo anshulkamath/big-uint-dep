@@ -16,9 +16,36 @@
  * @param old_x The old big integer
  * @param old_len The length of the old big integer
  */
-void big_uint_extend(uint32_t *new_x, size_t new_len, const uint32_t *old_x, size_t old_len) {
+static void big_uint_extend(uint32_t *new_x, size_t new_len, const uint32_t *old_x, size_t old_len) {
     memset(new_x, 0, new_len * UINT_BYTES);
     memcpy(&new_x[new_len - old_len], old_x, old_len * UINT_BYTES);
+}
+
+/**
+ * @brief Calculates log_2(x) (ceiling)
+ * 
+ * @param x The big integer to take the log of
+ * @param len The number of digits in x
+ * @param use_bits Boolean indicating whether to shift by bits (1) or digits (0)
+ * @return uint32_t 
+ */
+static uint32_t big_uint_log2(const uint32_t *x, size_t len, uint8_t use_bits) {
+    uint32_t k = 0;
+
+    uint32_t ZERO[len];
+    memset(ZERO, 0, len * UINT_BYTES);
+
+    uint32_t b[len];
+    memcpy(b, x, len * UINT_BYTES);
+
+    // calculate ceil(log_(2^32) p)
+    while(big_uint_cmp(b, ZERO, len) > 0) {
+        if (use_bits)   big_uint_shr2(b, b, 1, len);
+        else            big_uint_shr(b, b, 1, len);
+        ++k;
+    }
+
+    return k;
 }
 
 void mod_big_uint(uint32_t *result, const uint32_t *n, const uint32_t *p, size_t len) {
@@ -72,32 +99,19 @@ void barret_r(uint32_t *r, const uint32_t *p, size_t k, size_t len) {
 
 mod_t mod_init(const uint32_t *p, size_t len) {
     mod_t res;
-    uint32_t k = 0;
-
-    uint32_t ZERO[len];
-    memset(ZERO, 0, len * UINT_BYTES);
-
-    uint32_t b[len];
-    memcpy(b, p, len * UINT_BYTES);
-
-    // calculate ceil(log_(2^32) p)
-    while(big_uint_cmp(b, ZERO, len) > 0) {
-        big_uint_shr(b, b, 1, len);
-        ++k;
-    }
 
     // set result
-    res.k = k;
+    res.k = big_uint_log2(p, len, 0);
     res.len = len;
 
     // copy p and r into struct
     big_uint_extend(res.p, 2 * len + 1, p, len);
-    barret_r(res.r, p, k, len);
+    barret_r(res.r, p, res.k, len);
 
     return res;
 }
 
-void mod_mult(uint32_t* result, const uint32_t* a, const uint32_t* b, const mod_t *mod, size_t len) {
+void mod_mult(uint32_t *result, const uint32_t *a, const uint32_t *b, const mod_t *mod, size_t len) {
     size_t x_len = 2 * len;
     uint32_t x[x_len];
     memset(x, 0, x_len * UINT_BYTES);
@@ -139,4 +153,37 @@ void mod_mult(uint32_t* result, const uint32_t* a, const uint32_t* b, const mod_
     // copy t into the result
     size_t elem_no = t_len - len;
     memcpy(result, t + elem_no, len * UINT_BYTES);
+}
+
+void mod_exp(uint32_t *result, const uint32_t *x, const uint32_t *e, const mod_t *mod, size_t len) {
+    size_t digits = big_uint_log2(e, len, 1) - 1;
+    size_t ind = 0;
+    
+    uint32_t shift[len];
+    uint32_t zero[len];
+    uint32_t y[len];
+    uint32_t e_temp[len];
+
+    memcpy(shift, e, len * UINT_BYTES);
+    memset(zero, 0, len * UINT_BYTES);
+    memset(y, 0, len * UINT_BYTES);
+
+    y[len - 1] = 1;
+    while (big_uint_cmp(shift, zero, len) > 0) {
+        // compute y^2 (shift exponent right by 1)
+        mod_mult(y, y, y, mod, len);
+
+        // if (ind)th bit of exponent is one, multiply by x to set bit
+        big_uint_shr2(e_temp, e, (digits - ind), len);
+        if (e_temp[len - 1] & 1) {
+            mod_mult(y, y, x, mod, len);
+        }
+
+        // shift the shifter over and increment index
+        big_uint_shr2(shift, shift, 1, len);
+        ++ind;
+    }
+
+    // store result
+    memcpy(result, y, len * UINT_BYTES);
 }

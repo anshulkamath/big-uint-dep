@@ -39,7 +39,7 @@ void barrett_r(const uint32_t *p, uint32_t *r, size_t len);
  * @param p The prime we are modding out by
  * @param len The number of digits in n and p
  */
-void mod_big_uint(uint32_t* result, const uint32_t* n, const uint32_t* p, size_t len);
+void mod_big_uint(uint32_t *result, const uint32_t *n, const uint32_t *p, size_t len);
 
 /**
  * @brief Computes a + b (mod p) and puts the sum into result
@@ -50,7 +50,7 @@ void mod_big_uint(uint32_t* result, const uint32_t* n, const uint32_t* p, size_t
  * @param p The prime we are modding out by
  * @param len The number of digits in a, b, and p
  */
-void mod_add(uint32_t* result, const uint32_t* a, const uint32_t* b, const uint32_t* p, size_t len);
+void mod_add(uint32_t *result, const uint32_t *a, const uint32_t *b, const uint32_t *p, size_t len);
 
 /**
  * @brief Computes a - b (mod p) and puts the difference into result
@@ -61,7 +61,7 @@ void mod_add(uint32_t* result, const uint32_t* a, const uint32_t* b, const uint3
  * @param p The prime we are modding out by
  * @param len The number of digits in a, b, and p
  */
-void mod_sub(uint32_t* result, const uint32_t* a, const uint32_t* b, const uint32_t* p, size_t len);
+void mod_sub(uint32_t *result, const uint32_t *a, const uint32_t *b, const uint32_t *p, size_t len);
 
 /**
  * @brief Computes a * b (mod p) and puts the product into result
@@ -72,7 +72,18 @@ void mod_sub(uint32_t* result, const uint32_t* a, const uint32_t* b, const uint3
  * @param mod The mod struct initialized with the barrett reduction precomputation factor
  * @param len The number of digits in a, b, and p
  */
-void mod_mult(uint32_t* result, const uint32_t* a, const uint32_t* b, const mod_t *mod, size_t len);
+void mod_mult(uint32_t *result, const uint32_t *a, const uint32_t *b, const mod_t *mod, size_t len);
+
+/**
+ * @brief Computes x^e (mod p) and puts the product into result
+ * 
+ * @param result A pointer to where to store the modular product
+ * @param x The base of the exponent
+ * @param e The power of the exponent
+ * @param mod The mod struct initialized with the barrett reduction precomputation factor
+ * @param len The number of digits in x, e, and p
+ */
+void mod_exp(uint32_t *result, const uint32_t *x, const uint32_t *e, const mod_t *mod, size_t len);
 
 /**
  * @brief Calculates the multiplicative inverse of n modulo p
@@ -82,6 +93,6 @@ void mod_mult(uint32_t* result, const uint32_t* a, const uint32_t* b, const mod_
  * @param p The prime p of the field we are in
  * @param len The number of digits in n and p
  */
-void mod_inv(uint32_t* result, const uint32_t* n, const uint32_t* p, size_t len);
+void mod_inv(uint32_t *result, const uint32_t *n, const uint32_t *p, size_t len);
 
 #endif
