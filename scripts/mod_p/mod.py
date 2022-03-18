@@ -11,9 +11,6 @@ sys.path.append(parent)
 # setting random seed
 random.seed(1)
 
-import test_generator as tester
-import gcd.gcd as gcd
-
 # constants
 SIZE_INT_32 = 32
 
@@ -33,11 +30,11 @@ def mod_p(n, p):
     ''' takes in a big integer n and an big prime p and returns n mod p '''
     return n % p
 
-def mod_addition(m, n, p):
+def mod_add(m, n, p):
     ''' calculates m + n (mod p) '''
     return (m + n) % p
 
-def mod_subtraction(m, n, p):
+def mod_sub(m, n, p):
     ''' calculates m - n (mod p) '''
     return (m - n) % p
 
