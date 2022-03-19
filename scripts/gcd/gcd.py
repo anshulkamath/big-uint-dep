@@ -81,27 +81,26 @@ def generate_test_case(ind, num_digits = 1, num_bytes_a=1, num_bytes_b=1, a=None
         out.write(f'\texpect(tester, big_uint_equals(expected_y{ind}, result_y, {num_digits}));\n')
         out.write('\n')
 
-def create_test():
-    test_creator = tests.test_creator(
-        test_file,
-        'big_uint_gcd_extended',
-        results=['result_x', 'result_y']
-    )
-    indexer = tests.create_indexer()
+# DEPRECATED. LOOK AT test_generator.py
+# def create_test():
+#     test_creator = tests.test_creator(
+#         test_file,
+#         'big_uint_gcd_extended',
+#         results=['result_x', 'result_y']
+#     )
+#     indexer = tests.create_indexer()
 
-    next(test_creator)
+#     next(test_creator)
 
-    generate_test_case(next(indexer), 1, 1, a=143, b=234)
-    generate_test_case(next(indexer), 1, 1, 1)
-    generate_test_case(next(indexer), 2, 1, 1)
-    generate_test_case(next(indexer), 2, 2, 2)
-    generate_test_case(next(indexer), 2, 1, 2)
-    generate_test_case(next(indexer), 2, 2, 1)
-    generate_test_case(next(indexer), 3, 3, 3)
-    generate_test_case(next(indexer), 3, 3, 3)
-    generate_test_case(next(indexer), 3, 1, 2)
-    generate_test_case(next(indexer), 3, 1, 1)
+#     generate_test_case(next(indexer), 1, 1, a=143, b=234)
+#     generate_test_case(next(indexer), 1, 1, 1)
+#     generate_test_case(next(indexer), 2, 1, 1)
+#     generate_test_case(next(indexer), 2, 2, 2)
+#     generate_test_case(next(indexer), 2, 1, 2)
+#     generate_test_case(next(indexer), 2, 2, 1)
+#     generate_test_case(next(indexer), 3, 3, 3)
+#     generate_test_case(next(indexer), 3, 3, 3)
+#     generate_test_case(next(indexer), 3, 1, 2)
+#     generate_test_case(next(indexer), 3, 1, 1)
 
-    next(test_creator)
-
-create_test()
+#     next(test_creator)

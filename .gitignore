@@ -62,6 +62,8 @@ dkms.conf
 # Ignore all VSCode files
 .vscode/
 *.txt
-/scripts/test-bezout.c
+
+# Ignore auto-generated test files
+/scripts/*.c
 
 *.cpython*

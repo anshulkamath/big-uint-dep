@@ -267,10 +267,13 @@ void big_uint_add(uint32_t *result, const uint32_t *a, const uint32_t *b, size_t
     uint32_t a_cpy[len];
     memcpy(a_cpy, a, sizeof(uint32_t) * len);
 
+    uint32_t b_cpy[len];
+    memcpy(b_cpy, b, sizeof(uint32_t) * len);
+
     uint8_t carry = 0;
     for (int i = len - 1; i >= 0; i--) {
         result[i] = a_cpy[i] + b[i] + carry;
-        carry = (uint64_t) a_cpy[i] + b[i] + carry > UINT32_MAX; // determine if overflow occurred
+        carry = (uint64_t) a_cpy[i] + b_cpy[i] + carry > UINT32_MAX; // determine if overflow occurred
     }
 }
 
@@ -279,10 +282,13 @@ void big_uint_sub(uint32_t *result, const uint32_t *a, const uint32_t *b, size_t
     uint32_t a_cpy[len];
     memcpy(a_cpy, a, sizeof(uint32_t) * len);
 
+    uint32_t b_cpy[len];
+    memcpy(b_cpy, b, sizeof(uint32_t) * len);
+
     size_t carry = 0;
     for (int i = len - 1; i >= 0; i--) {
         result[i] = a_cpy[i] - b[i] - carry;
-        carry = (uint64_t) a_cpy[i] - b[i] - carry > UINT32_MAX; // determine if underflow occurred
+        carry = (uint64_t) a_cpy[i] - b_cpy[i] - carry > UINT32_MAX; // determine if underflow occurred
     }
 }
 

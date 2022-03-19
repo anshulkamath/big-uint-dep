@@ -5,7 +5,7 @@ This repository is a C implementation of a software-based Big Unsigned Integer L
 ``` uint32_t x[] = { 0x12345678, 0x12345678 } = 1,311,768,465,173,141,112 ```
 
 ## Implementation
-The following contains a list of all the Big Integer methods included.
+The following contains a list of all the Big Integer methods included in `big-uint.h`.
 <ol>
     <li>big_uint_equals</li>
     <li>big_uint_cmp</li>
@@ -28,4 +28,15 @@ The following contains a list of all the Big Integer methods included.
     <li>big_uint_div</li>
     <li>big_uint_gcd</li>
     <li>big_uint_gcd_extended</li>
+</ol>
+
+Additionally, we have added the following modular arithmetic functions in `mod.h`:
+<ol>
+    <li>mod_init</li>
+    <li>mod_big_uint</li>
+    <li>mod_add</li>
+    <li>mod_sub</li>
+    <li>mod_mult</li>
+    <li>mod_exp</li>
+    <!-- <li>mod_sub</li> -->
 </ol>
