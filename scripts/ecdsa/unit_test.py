@@ -21,7 +21,7 @@ def gen_int(p: int = ec.p) -> int:
 def test_equals(p1: ec.Coord, p2: Point) -> bool:
     ''' checks if the two points are equal '''
     if p2.is_infinity:
-        res = p1.x == 0 and p1.y == 0
+        res = p1 == ec.Coord.identity()
     else:
         res = p1.x == p2.x and p1.y == p2.y
     
@@ -31,7 +31,6 @@ def test_ec_add():
     ''' test for elliptic curve addition '''
     cv1 = Curve.get_curve('secp256k1')
     cv2 = ec.Curve(ec.p, ec.n, ec.a, ec.b)
-    mod_t = ec.mod.mod_init(ec.p, 0)
 
     random.seed(1)
 
@@ -64,7 +63,7 @@ def test_ec_add():
             Q2 = Q1
 
         exp = Q1 + Q2
-        act = ec.ec_add(P1, P2, cv2, mod_t)
+        act = ec.ec_add(P1, P2, cv2)
 
         if not test_equals(act, exp):
             print(get_err(P1, P2, cv2, exp, act))
@@ -72,32 +71,93 @@ def test_ec_add():
 
     return True
 
-def test_ec_mult():
+def test_ec_mult(num_tests=100):
     ''' tests for elliptic curve multiplication '''
     cv1 = Curve.get_curve('secp256k1')
     cv2 = ec.Curve(ec.p, ec.n, ec.a, ec.b)
-    mod_t = ec.mod.mod_init(ec.p, 0)
 
     random.seed(1)
 
     get_err = lambda p1, k, cv, exp, act: \
-            f'Error when multiplying {p1} by {k} in curve {cv}.\nExpected\n\t{exp}\nbut got\n\t{act}\ninstead'
+            f'Error when multiplying\n\tpoint: {p1} \n\tby scalar: {hex(k)}\nin curve:\n  {cv}.\n\nExpected point\n\t{exp}\nbut got point\n\t{act}\ninstead\n'
 
-    for _ in range(100):
+    for i in range(num_tests):
         P = gen_point(cv2)
-        Q = Point(P.x, P.y, cv1)
         k = random.randint(1, cv2.p - 1)
+            
+        # manual test before wrapping to identity
+        if i == 0:
+            P = cv2.G
+            k = cv2.n - 1
+
+        # manual test wrapping to identity
+        if i == 1:
+            P = cv2.G
+            k = cv2.n
+        
+        # manual test wrapping to original generator
+        if i == 2:
+            P = cv2.G
+            k = cv2.n + 1
+        
+        Q = Point(P.x, P.y, cv1)
 
         exp = k * Q
-        act = ec.ec_mult(P, k, cv2, mod_t)
+        act = ec.ec_mult(P, k, cv2)
 
         if not test_equals(act, exp):
             print(get_err(P, k, cv2, exp, act))
             return False
 
+    # test scalar multiplication
+    for _ in range(5):
+        P = gen_point(cv2)
+        k1 = random.randint(1, cv2.p - 1)
+        k2 = random.randint(1, cv2.p - 1)
+
+        exp = ec.ec_mult(ec.ec_mult(P, k1, cv2), k2, cv2)
+        act = ec.ec_mult(P, k1 * k2, cv2)
+
+        if exp != act:
+            print(get_err(P, k1 * k2, cv2, exp, act))
+            return False
+    
+    # test distribution
+    for _ in range(5):
+        P = gen_point(cv2)
+        k1 = random.randint(1, cv2.p - 1)
+        k2 = random.randint(1, cv2.p - 1)
+
+        exp = ec.ec_add(ec.ec_mult(P, k1, cv2), ec.ec_mult(P, k2, cv2), cv2)
+        act = ec.ec_mult(P, k1 + k2, cv2)
+
+        if exp != act:
+            print(get_err(P, k1 * k2, cv2, exp, act))
+            return False
+
     return True
 
-def run_tests(tests: callable = [test_ec_add, test_ec_mult]):
+def test_ecdsa_signature():
+    ''' tests ecdsa signature algorithm '''    
+    random.seed(1)
+    cv = ec.Curve()
+    skey, pkey = ec.ecdsa_keygen(cv)
+
+    get_err = lambda m, e, a : f'Error when verifying message {m}. Expected {e} but got {a}'
+
+    for _ in range(10):
+        # get random 'hash'
+        m = int.from_bytes(random.randbytes(64), byteorder='little')
+
+        signature = ec.ec_sign(m, skey, cv)
+
+        if not ec.ec_verify(signature, m, pkey, cv):
+            print(get_err(m, True, False))
+            return False
+        
+    return True
+
+def run_tests(tests: callable = [test_ec_add, test_ec_mult, test_ecdsa_signature]):
     ''' runs all test suites '''
     get_test_status = lambda x : '[PASS]' if x else '[FAIL]'
     for test in tests:
