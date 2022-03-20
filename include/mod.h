@@ -7,10 +7,10 @@
 #define N_MAX 32    // maximum number of digits
 
 typedef struct mod {
-    uint32_t            k;  // k-value in barrett reduction
-    size_t            len;  // number of digits in p
     uint32_t p[2 * N_MAX];  // pointer to prime number
     uint32_t r[2 * N_MAX];  // r-value in barrett reduction
+    size_t            len;  // number of digits in p
+    uint32_t            k;  // k-value in barrett reduction
 } mod_t;
 
 /**
