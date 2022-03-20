@@ -30,7 +30,7 @@ def test_equals(p1: ec.Coord, p2: Point) -> bool:
 def test_ec_add():
     ''' test for elliptic curve addition '''
     cv1 = Curve.get_curve('secp256k1')
-    cv2 = ec.Curve(ec.p, ec.n, ec.a, ec.b)
+    cv2 = ec.EllipticCurve(ec.p, ec.n, ec.a, ec.b)
 
     random.seed(1)
 
@@ -63,7 +63,7 @@ def test_ec_add():
             Q2 = Q1
 
         exp = Q1 + Q2
-        act = ec.ec_add(P1, P2, cv2)
+        act = cv2.ec_add(P1, P2)
 
         if not test_equals(act, exp):
             print(get_err(P1, P2, cv2, exp, act))
@@ -74,7 +74,7 @@ def test_ec_add():
 def test_ec_mult(num_tests=100):
     ''' tests for elliptic curve multiplication '''
     cv1 = Curve.get_curve('secp256k1')
-    cv2 = ec.Curve(ec.p, ec.n, ec.a, ec.b)
+    cv2 = ec.EllipticCurve(ec.p, ec.n, ec.a, ec.b)
 
     random.seed(1)
 
@@ -103,7 +103,7 @@ def test_ec_mult(num_tests=100):
         Q = Point(P.x, P.y, cv1)
 
         exp = k * Q
-        act = ec.ec_mult(P, k, cv2)
+        act = cv2.ec_mult(k, P)
 
         if not test_equals(act, exp):
             print(get_err(P, k, cv2, exp, act))
@@ -115,8 +115,8 @@ def test_ec_mult(num_tests=100):
         k1 = random.randint(1, cv2.p - 1)
         k2 = random.randint(1, cv2.p - 1)
 
-        exp = ec.ec_mult(ec.ec_mult(P, k1, cv2), k2, cv2)
-        act = ec.ec_mult(P, k1 * k2, cv2)
+        exp = cv2.ec_mult(k2, cv2.ec_mult(k1, P))
+        act = cv2.ec_mult(k1 * k2, P)
 
         if exp != act:
             print(get_err(P, k1 * k2, cv2, exp, act))
@@ -128,8 +128,8 @@ def test_ec_mult(num_tests=100):
         k1 = random.randint(1, cv2.p - 1)
         k2 = random.randint(1, cv2.p - 1)
 
-        exp = ec.ec_add(ec.ec_mult(P, k1, cv2), ec.ec_mult(P, k2, cv2), cv2)
-        act = ec.ec_mult(P, k1 + k2, cv2)
+        exp = cv2.ec_add(cv2.ec_mult(k1, P), cv2.ec_mult(k2, P))
+        act = cv2.ec_mult(k1 + k2, P)
 
         if exp != act:
             print(get_err(P, k1 * k2, cv2, exp, act))
@@ -140,8 +140,9 @@ def test_ec_mult(num_tests=100):
 def test_ecdsa_signature():
     ''' tests ecdsa signature algorithm '''    
     random.seed(1)
-    cv = ec.Curve()
-    skey, pkey = ec.ecdsa_keygen(cv)
+    cv = ec.EllipticCurve()
+    ecdsa = ec.ECDSA(cv)
+    skey, pkey = cv.ec_keygen()
 
     get_err = lambda m, e, a : f'Error when verifying message {m}. Expected {e} but got {a}'
 
@@ -149,9 +150,9 @@ def test_ecdsa_signature():
         # get random 'hash'
         m = int.from_bytes(random.randbytes(64), byteorder='little')
 
-        signature = ec.ec_sign(m, skey, cv)
+        signature = ecdsa.ec_sign(m, skey)
 
-        if not ec.ec_verify(signature, m, pkey, cv):
+        if not ecdsa.ec_verify(signature, m, pkey):
             print(get_err(m, True, False))
             return False
         

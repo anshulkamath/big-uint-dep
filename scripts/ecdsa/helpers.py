@@ -18,13 +18,13 @@ def check_euler_criterion(x: int, p: int) -> bool:
     ''' checks Euler's criterion; x^{(p-1)/2} = 1 (mod p) '''
     return pow(x, (p - 1) // 2, p) == 1
 
-def get_val(x: int, cv: ec.Curve) -> ec.Coord:
+def get_val(x: int, cv: ec.EllipticCurve) -> ec.Coord:
     ''' takes in an x and returns the square of a point on the curve '''
     y_sq = (x ** 3 + cv.a * x + cv.b) % cv.p
 
     return y_sq
 
-def on_curve(p: ec.Coord, cv: ec.Curve, mod_t: list) -> bool:
+def on_curve(p: ec.Coord, cv: ec.EllipticCurve, mod_t: list) -> bool:
     ''' takes in a point and a curve and returns true iff the point is on the curve '''
     x, y = p.x, p.y
     rhs = ec.mod.mod_exp(y, 2, mod_t)
@@ -32,7 +32,7 @@ def on_curve(p: ec.Coord, cv: ec.Curve, mod_t: list) -> bool:
 
     return rhs == lhs
 
-def gen_point(cv: ec.Curve) -> ec.Coord:
+def gen_point(cv: ec.EllipticCurve) -> ec.Coord:
     ''' generates a random point on the elliptic curve using Tonelli-Shanks algorithm '''
     y = None
 
