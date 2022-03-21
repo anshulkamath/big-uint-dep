@@ -63,6 +63,9 @@ class Coord:
     def __eq__(self, other):
         return self.x == other.x and self.y == other.y
 
+I = Coord(0, 0)
+G = Coord(x, y)
+
 class EllipticCurve:
     def __init__(self, p = p, n = n, a = a, b = b, G = Coord(x, y), x = -1, y = -1):
         ''' initializes an instance of a (Weierstrauss) curve '''
@@ -142,6 +145,29 @@ class EllipticCurve:
         ''' generates a private and public key using the given curve, respectively '''
         skey = random.randint(1, self.n - 1)
         return (skey, self.ec_mult(skey, self.G))
+
+    def gen_point(self) -> Coord:
+        ''' generates a random point on the elliptic curve using Tonelli-Shanks algorithm '''
+        y = None
+
+        # iterate until we get a solution
+        while not y:
+            # generate an x coordinate
+            x = random.randint(1, self.p - 1)
+            
+            # find the square of our y-coordinate
+            y_sq = self._get_sq_val(x)
+
+            # find the modular inverse of y
+            y = mod.mod_sqrt(y_sq, self.p)
+
+        return Coord(x, y)
+    
+    def _get_sq_val(self, x: int) -> Coord:
+        ''' takes in an x and returns the square of a point on the curve '''
+        y_sq = (x ** 3 + self.a * x + self.b) % self.p
+
+        return y_sq
 
 class ECDSA:
     def __init__(self, cv: EllipticCurve):

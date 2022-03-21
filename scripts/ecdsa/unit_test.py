@@ -12,7 +12,6 @@ random.seed(1)
 
 from ecpy.curves import Curve, Point
 import ecdsa as ec
-from helpers import *
 
 def gen_int(p: int = ec.p) -> int:
     ''' returns a random element in F_p '''
@@ -39,8 +38,8 @@ def test_ec_add():
 
     # test distinct points
     for i in range(100):
-        P1 = gen_point(cv2)
-        P2 = gen_point(cv2)
+        P1 = cv2.gen_point()
+        P2 = cv2.gen_point()
 
         Q1 = Point(P1.x, P1.y, cv1)
         Q2 = Point(P2.x, P2.y, cv1)
@@ -82,7 +81,7 @@ def test_ec_mult(num_tests=100):
             f'Error when multiplying\n\tpoint: {p1} \n\tby scalar: {hex(k)}\nin curve:\n  {cv}.\n\nExpected point\n\t{exp}\nbut got point\n\t{act}\ninstead\n'
 
     for i in range(num_tests):
-        P = gen_point(cv2)
+        P = cv2.gen_point()
         k = random.randint(1, cv2.p - 1)
             
         # manual test before wrapping to identity
@@ -111,7 +110,7 @@ def test_ec_mult(num_tests=100):
 
     # test scalar multiplication
     for _ in range(5):
-        P = gen_point(cv2)
+        P = cv2.gen_point()
         k1 = random.randint(1, cv2.p - 1)
         k2 = random.randint(1, cv2.p - 1)
 
@@ -124,7 +123,7 @@ def test_ec_mult(num_tests=100):
     
     # test distribution
     for _ in range(5):
-        P = gen_point(cv2)
+        P = cv2.gen_point()
         k1 = random.randint(1, cv2.p - 1)
         k2 = random.randint(1, cv2.p - 1)
 
