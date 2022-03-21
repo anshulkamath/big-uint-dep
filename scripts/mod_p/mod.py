@@ -151,3 +151,7 @@ def mod_sqrt(n: int, p: int) -> int:
         x = (x * gs) % p
         b = (b * g) % p
         r = m
+
+def mod_neg(m: int, p: int) -> int:
+    ''' returns the additive inverse of m (mod p) '''
+    return mod_sub(0, m, p)

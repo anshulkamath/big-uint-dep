@@ -76,7 +76,24 @@ def test_mod_div():
     
     return True
 
-def run_tests(tests: callable = [test_barrett_r, test_mod_exp, test_mod_inv, test_mod_div]):
+def test_mod_neg():
+    random.seed(1)
+
+    for p in [prime0, prime1, prime2]:
+        for _ in range(1000):
+            m = random.randint(1, p - 1)
+
+            expected = (-m) % p
+            actual = mod_neg(m, p)
+
+            if not actual == expected:
+                print(m, p, expected, actual)
+                print()
+                return False
+    
+    return True
+
+def run_tests(tests: callable = [test_barrett_r, test_mod_exp, test_mod_inv, test_mod_div, test_mod_neg]):
     get_test_status = lambda x : '[PASS]' if x else '[FAIL]'
     for test in tests:
         res = test()

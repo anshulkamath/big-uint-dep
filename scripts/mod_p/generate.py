@@ -42,6 +42,7 @@ test.create_test(test_file, mod.mod_div, 'mod_div', test.generate_mult_test_case
     (test.generate_mult_op_ass1, 2, mod.prime2),
     (test.generate_mult_op_ass2, 2, mod.prime2)
 ])
+test.create_test(test_file, mod.mod_neg, 'mod_neg', test.generate_mod_neg_test_case)
 
 # call all the tests
 tester.test_closer(test_file)

@@ -216,6 +216,26 @@ def generate_mod_inv_test_case(ind, file, func, func_name, num_digits, n = None,
         out.write(f'\texpect(tester, big_uint_equals(expected{ind}, result, {num_digits}));\n')
         out.write('\n')
 
+def generate_mod_neg_test_case(ind, file, func, func_name, num_digits, n = None, p = None):
+    ''' generates a test case for the mod_p function '''
+    if not n:
+        n = tester.generate_random_number(num_digits) % p
+    if not p:
+        p = random.choice([prime0, prime1, prime2])
+
+    res = func(n, p)
+
+    with open(file, 'a', newline='') as out:
+        out.write(f'\t// Test {ind}\n')
+        out.write(f'\tconst uint32_t n{ind}[] = {tester.format_int(n, num_digits)};\n')
+        out.write(f'\tconst uint32_t p{ind}[] = {tester.format_int(p, num_digits)};\n')
+        out.write(f'\tconst uint32_t expected{ind}[] = {tester.format_int(res, num_digits)};\n')
+        out.write('\n')
+        out.write(f'\t{func_name}(result, n{ind}, p{ind}, {num_digits});\n')
+        out.write('\n')
+        out.write(f'\texpect(tester, big_uint_equals(expected{ind}, result, {num_digits}));\n')
+        out.write('\n')
+
 def create_test(file, func, func_name, generate_func, types=['uint32_t'], results=['result'], misc_tests=None):
     ''' creates a test for the given function '''
     indexer = tester.create_indexer()
