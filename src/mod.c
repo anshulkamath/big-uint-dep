@@ -207,5 +207,12 @@ void mod_div(uint32_t *result, const uint32_t *m, const uint32_t *n, const mod_t
     mod_mult(result, m, n_inv, mod, len);
 }
 
+void mod_neg(uint32_t *result, const uint32_t *n, const uint32_t *p, size_t len) {
+    uint32_t ZERO[len];
+    memset(ZERO, 0, len * UINT_BYTES);
+
+    mod_sub(result, ZERO, n, p, len);
+}
+
 #undef NUM_BITS_32
 #undef UINT_BYTES

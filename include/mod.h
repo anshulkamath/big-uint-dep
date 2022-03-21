@@ -106,5 +106,15 @@ void mod_inv(uint32_t *result, const uint32_t *x, const mod_t *mod, size_t len);
  */
 void mod_div(uint32_t *result, const uint32_t *m, const uint32_t *n, const mod_t *mod, size_t len);
 
+/**
+ * @brief finds the additive inverse -n (mod p)
+ * 
+ * @param result where to store the modular inverse
+ * @param n the address of the number to negate
+ * @param p the address of the prime p
+ * @param len the number of digits in `m` and `p`
+ */
+void mod_neg(uint32_t *result, const uint32_t *n, const uint32_t *p, size_t len);
+
 #undef N_MAX
 #endif
