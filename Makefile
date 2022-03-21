@@ -1,9 +1,9 @@
 CC = /usr/local/opt/llvm/bin/clang
-INCLUDES = -Iinclude
+INCLUDES = -Iinclude -Iconstants
 LIBS = -Llib -lhex -ltesting-logger
 CFLAGS = -g -Wall -Wextra -pedantic -std=c17 -Wno-unused-command-line-argument -std=c17 $(INCLUDES) $(LIBS)
 
-SRC_FILES = sha256 big-uint mod
+SRC_FILES = sha256 big-uint mod ec
 OBJ_FILES = $(addprefix obj/,$(SRC_FILES:=.o))
 
 CYAN =\x1b[36m
