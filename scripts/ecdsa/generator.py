@@ -31,30 +31,32 @@ def generate_ec_add_test(ind, file, func, func_name, num_digits=8, p1=None, p2=N
         out.write(f'\t// Test {ind}\n')
         out.write(f'\tconst uint32_t x{ind}a[] = {tester.format_point(p1.x, num_digits)};\n')
         out.write(f'\tconst uint32_t y{ind}a[] = {tester.format_point(p1.y, num_digits)};\n')
-        out.write(f'\tconst point_t p{ind}a;\n')
-        out.write(f'\tpoint_init(&p{ind}a, x{ind}a, y{ind}a);\n\n')
+        out.write(f'\tpoint_t p{ind}a;\n')
+        out.write(f'\tpoint_init(&p{ind}a, &x{ind}a[0], &y{ind}a[0]);\n\n')
 
         out.write(f'\tconst uint32_t x{ind}b[] = {tester.format_point(p2.x, num_digits)};\n')
         out.write(f'\tconst uint32_t y{ind}b[] = {tester.format_point(p2.y, num_digits)};\n')
-        out.write(f'\tconst point_t p{ind}b;\n')
-        out.write(f'\tpoint_init(&p{ind}b, x{ind}b, y{ind}b);\n\n')
+        out.write(f'\tpoint_t p{ind}b;\n')
+        out.write(f'\tpoint_init(&p{ind}b, &x{ind}b[0], &y{ind}b[0]);\n\n')
         
         out.write(f'\tconst uint32_t expected_x{ind}[] = {tester.format_point(res.x, num_digits)};\n')
         out.write(f'\tconst uint32_t expected_y{ind}[] = {tester.format_point(res.y, num_digits)};\n')
-        out.write(f'\tconst point_t expected_p{ind};\n')
-        out.write(f'\tpoint_init(&expected_p{ind}, &expected_x{ind}, &expected_y{ind});\n\n')
+        out.write(f'\tpoint_t expected_p{ind};\n')
+        out.write(f'\tpoint_init(&expected_p{ind}, &expected_x{ind}[0], &expected_y{ind}[0]);\n\n')
 
-        out.write(f'\t{func_name}(&result, &p{ind}a, &p{ind}b, &EC);\n\n')
+        out.write(f'\t{func_name}(&result, &p{ind}a, &p{ind}b, EC);\n\n')
 
         out.write(f'\texpect(tester, point_equals(&expected_p{ind}, &result));\n\n')
     
-def create_ec_add_test(file, func, func_name, generate_func, results=['result'], misc_tests=None):
+def create_ec_add_test(file, func, func_name, generate_func, types=['point_t'], results=['result'], args=['const ec_t *EC']):
     ''' creates a test for the given function '''
     indexer = tester.create_indexer()
     test_creator = tester.test_creator(
         file,
         func_name,
-        results=results
+        types=types,
+        results=results,
+        args=args
     )
 
     next(test_creator)
@@ -76,10 +78,5 @@ def create_ec_add_test(file, func, func_name, generate_func, results=['result'],
     generate()
     generate()
     generate()
-
-    # if there are miscellaneous tests to run afterwards, run them
-    if misc_tests:
-        for (test, digits, p) in misc_tests:
-            test(next(indexer), file, func, func_name, digits, p=p)
 
     next(test_creator)

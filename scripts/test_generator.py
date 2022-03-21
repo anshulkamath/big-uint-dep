@@ -57,15 +57,18 @@ def initialize_test(file_name, libs):
         
         out.write('\n')
 
-def test_creator(file_name, function_name, types=['uint32_t'], results=['result']):
+def test_creator(file_name, function_name, types=['uint32_t'], results=['result'], args=[]):
     ''' generator to create and write skeleton of test '''
     func_names.append(f'test_{function_name}')
 
     with open(file_name, 'a', newline='') as out:
-        out.write(f'void {func_names[-1]}() {{\n')
+        out.write(f'void {func_names[-1]}({", ".join(args)}) {{\n')
         out.write('\ttesting_logger_t *tester = create_tester();\n')
         for type, result in zip(types, results):
-            out.write(f'\t{type} {result}[5] = {{ 0 }};\n')
+            if type == 'uint32_t':
+                out.write(f'\t{type} {result}[5] = {{ 0 }};\n')
+            else:
+                out.write(f'\t{type} {result};\n')
         out.write('\n')
 
     yield
