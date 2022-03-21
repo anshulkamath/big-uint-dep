@@ -1,3 +1,5 @@
+// this file contains parameters for secp256k1 elliptic curve
+
 #include <stdint.h>
 #include "ec.h"
 
