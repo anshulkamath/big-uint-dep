@@ -206,3 +206,6 @@ void mod_div(uint32_t *result, const uint32_t *m, const uint32_t *n, const mod_t
     mod_inv(n_inv, n, mod, len);
     mod_mult(result, m, n_inv, mod, len);
 }
+
+#undef NUM_BITS_32
+#undef UINT_BYTES

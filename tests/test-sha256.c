@@ -7,6 +7,8 @@
 #include "testing-logger.h"
 #include "sha256.h"
 
+#define SHA256_BITS 256
+
 // Tests
 void empty_string_test() {
     // Defining tester

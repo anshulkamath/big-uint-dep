@@ -106,4 +106,5 @@ void mod_inv(uint32_t *result, const uint32_t *x, const mod_t *mod, size_t len);
  */
 void mod_div(uint32_t *result, const uint32_t *m, const uint32_t *n, const mod_t *mod, size_t len);
 
+#undef N_MAX
 #endif

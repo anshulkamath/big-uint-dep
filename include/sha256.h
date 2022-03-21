@@ -15,4 +15,5 @@
  */
 void sha256(uint8_t *hash, const char *message, uint8_t length);
 
+#undef SHA256_BITS
 #endif
