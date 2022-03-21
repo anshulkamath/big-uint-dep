@@ -216,12 +216,13 @@ def generate_mod_inv_test_case(ind, file, func, func_name, num_digits, n = None,
         out.write(f'\texpect(tester, big_uint_equals(expected{ind}, result, {num_digits}));\n')
         out.write('\n')
 
-def create_test(file, func, func_name, generate_func, results=['result'], misc_tests=None):
+def create_test(file, func, func_name, generate_func, types=['uint32_t'], results=['result'], misc_tests=None):
     ''' creates a test for the given function '''
     indexer = tester.create_indexer()
     test_creator = tester.test_creator(
         file,
         func_name,
+        types=types,
         results=results
     )
 
