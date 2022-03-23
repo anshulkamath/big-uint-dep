@@ -78,6 +78,24 @@ const point_t* get_identity();
  */
 uint8_t point_equals(const point_t *p1, const point_t *p2);
 
+/**
+ * @brief copies the point in src to the point in dest
+ * 
+ * @param dest the destination to copy to
+ * @param src the source to copy from
+ */
+void point_copy(point_t *dest, const point_t *src);
+
+/**
+ * @brief returns 1 if and only if p1 and p2 are additive inverses for a given curve
+ * 
+ * @param p1 address of the first point to check
+ * @param p2 address of the second point to check
+ * @param ec address of the curve the points are on
+ * @return uint8_t 1 if and only if p1 and p2 are additive inverses
+ */
+uint8_t point_is_inverse(const point_t *p1, const point_t *p2, const ec_t *ec);
+
 // ------------------------------------------
 //            Elliptic Curve Stubs           
 // ------------------------------------------

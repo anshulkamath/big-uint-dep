@@ -44,16 +44,27 @@ uint8_t point_equals(const point_t *p1, const point_t *p2) {
     return x_eq && y_eq;
 }
 
+uint8_t point_is_inverse(const point_t *p1, const point_t *p2, const ec_t *ec) {
+    uint32_t inv[N_MAX];
+    mod_neg(inv, p1->y, ec->p, N_MAX);
+
+    point_t inv_point;
+    point_copy(&inv_point, p1);
+    memcpy(inv_point.y, inv, N_MAX * UINT_BYTES);
+
+    return point_equals(p2, &inv_point);
+}
+
+void point_copy(point_t *dest, const point_t *src) {
+    memcpy(dest->x, src->x, N_MAX * UINT_BYTES);
+    memcpy(dest->y, src->y, N_MAX * UINT_BYTES);
+}
+
 const point_t *get_identity() {
     return &identity;
 }
 
 uint8_t ec_init(ec_t *ec, const uint32_t *a, const uint32_t *b, const uint32_t *p, const uint32_t *n, const point_t *g) {
-    // 1. calculate mod_p
-    // 2. verify 4a^2 + 27b^3 != 0
-    // 3. verify point on curve (later)
-    // 4. calculate mod_n
-    // 5. assign variables
     mod_t mod_p = mod_init(p, N_MAX);
 
     uint32_t temp1[N_MAX] = { 0 };
@@ -87,17 +98,66 @@ uint8_t ec_init(ec_t *ec, const uint32_t *a, const uint32_t *b, const uint32_t *
     memcpy(ec->g.x, g->x, NUM_BYTES);
     memcpy(ec->g.y, g->y, NUM_BYTES);
     
-    memcpy(ec->mod_p.p, mod_p.p, NUM_BYTES);
-    memcpy(ec->mod_p.r, mod_p.r, NUM_BYTES);
-    ec->mod_p.k = mod_p.k;
-    ec->mod_p.len = mod_p.len;
-    
-    memcpy(ec->mod_n.p, mod_n.p, NUM_BYTES);
-    memcpy(ec->mod_n.r, mod_n.r, NUM_BYTES);
-    ec->mod_n.k = mod_n.k;
-    ec->mod_n.len = mod_n.len;
+    mod_t_copy(&ec->mod_p, &mod_p);
+    mod_t_copy(&ec->mod_n, &mod_n);
 
     return 0;
+}
+
+void ec_add(point_t *res, const point_t *p1, const point_t *p2, const ec_t *ec) {
+    if (point_is_identity(p1)) {
+        point_copy(res, p2);
+        return;
+    }
+
+    if (point_is_identity(p2)) {
+        point_copy(res, p1);
+        return;
+    }
+
+    if (point_is_inverse(p1, p2, ec)) {
+        point_copy(res, get_identity());
+        return;
+    }
+
+    // calculate lambda
+    uint32_t lambda[N_MAX];
+    uint32_t temp1[N_MAX];
+    uint32_t temp2[N_MAX];
+
+    // if the points are equal, then use the tangent line
+    if (point_equals(p1, p2)) {
+        big_uint_load(lambda, 3, N_MAX);
+        mod_mult(lambda, lambda, p1->x, &ec->mod_p, N_MAX);
+        mod_mult(lambda, lambda, p1->x, &ec->mod_p, N_MAX);
+        mod_add(lambda, lambda, ec->a, ec->p, N_MAX);
+
+        big_uint_load(temp1, 2, N_MAX);
+        mod_mult(temp1, temp1, p1->y, &ec->mod_p, N_MAX);
+        mod_inv(temp1, temp1, &ec->mod_p, N_MAX);
+
+        mod_mult(lambda, lambda, temp1, &ec->mod_p, N_MAX);
+    } else {
+        mod_sub(lambda, p2->y, p1->y, ec->p, N_MAX);
+        mod_sub(temp1, p2->x, p1->x, ec->p, N_MAX);
+        mod_inv(temp2, temp1, &ec->mod_p, N_MAX);
+        mod_mult(lambda, lambda, temp2, &ec->mod_p, N_MAX);
+    }
+
+    uint32_t x3[N_MAX];
+    uint32_t y3[N_MAX];
+
+    // calculate x3
+    mod_mult(x3, lambda, lambda, &ec->mod_p, N_MAX);
+    mod_sub(x3, x3, p1->x, ec->p, N_MAX);
+    mod_sub(x3, x3, p2->x, ec->p, N_MAX);
+
+    // calculate y3
+    mod_sub(y3, p1->x, x3, ec->p, N_MAX);
+    mod_mult(y3, lambda, y3, &ec->mod_p, N_MAX);
+    mod_sub(y3, y3, p1->y, ec->p, N_MAX);
+
+    point_init(res, x3, y3);
 }
 
 #undef N_MAX
