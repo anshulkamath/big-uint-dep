@@ -67,3 +67,4 @@ dkms.conf
 /scripts/*/*.c
 
 *.cpython*
+test.py
