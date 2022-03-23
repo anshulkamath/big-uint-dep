@@ -16,3 +16,4 @@ cv = ecdsa.EllipticCurve()
 
 tester.initialize_test(test_file, [])
 test.create_ec_add_test(test_file, cv.ec_add, 'ec_add', test.generate_ec_add_test)
+test.create_point_inv_test(test_file, 'point_is_inverse', test.generate_point_inv_test)
