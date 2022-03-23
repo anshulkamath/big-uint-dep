@@ -23,6 +23,14 @@ typedef struct mod {
 mod_t mod_init(const uint32_t *p, size_t len);
 
 /**
+ * @brief copies the mod_t instance in src to dest
+ * 
+ * @param dest where to put the new mod_t instance
+ * @param src where to copy from
+ */
+void mod_t_copy(mod_t *dest, const mod_t *src);
+
+/**
  * @brief Calculates the pre-computation factor r in Barrett reduction 
  * 
  * @param p The prime to use in Barrett reduction

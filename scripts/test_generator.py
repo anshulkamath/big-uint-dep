@@ -66,7 +66,7 @@ def test_creator(file_name, function_name, types=['uint32_t'], results=['result'
         out.write('\ttesting_logger_t *tester = create_tester();\n')
         for type, result in zip(types, results):
             if type == 'uint32_t':
-                out.write(f'\t{type} {result}[5] = {{ 0 }};\n')
+                out.write(f'\t{type} {result}[8] = {{ 0 }};\n')
             else:
                 out.write(f'\t{type} {result};\n')
         out.write('\n')
