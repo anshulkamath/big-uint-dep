@@ -5,6 +5,8 @@
 
 #define UINT_BYTES sizeof(uint32_t)
 #define BITS_32 32
+#define LOG_2_BIT 1
+#define LOG_2_DIGIT 0
 
 // ---------------------------- //
 //     Comparison Functions     //
@@ -230,6 +232,16 @@ void big_uint_mult(uint32_t *result, const uint32_t *a, const uint32_t *b, size_
  * @param len The number of digits
  */
 void big_uint_div(uint32_t *q, uint32_t *r, const uint32_t *u, const uint32_t *v, size_t len);
+
+/**
+ * @brief Calculates log_2(x) (ceiling)
+ * 
+ * @param x The big integer to take the log of
+ * @param len The number of digits in x
+ * @param use_bits Boolean indicating whether to shift by bits (1) or digits (0)
+ * @return uint32_t 
+ */
+uint32_t big_uint_log2(const uint32_t *x, size_t len, uint8_t use_bits);
 
 // -------------------------------- //
 //         Number Theory Ops        //

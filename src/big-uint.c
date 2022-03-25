@@ -350,6 +350,26 @@ void big_uint_div(uint32_t *q, uint32_t *r, const uint32_t *u, const uint32_t *v
     }
 }
 
+// TODO: Add tests for this function
+uint32_t big_uint_log2(const uint32_t *x, size_t len, uint8_t use_bits) {
+    uint32_t k = 0;
+
+    uint32_t ZERO[len];
+    memset(ZERO, 0, len * UINT_BYTES);
+
+    uint32_t b[len];
+    memcpy(b, x, len * UINT_BYTES);
+
+    // calculate ceil(log_(2^32) p)
+    while(big_uint_cmp(b, ZERO, len) > 0) {
+        if (use_bits)   big_uint_shr2(b, b, 1, len);
+        else            big_uint_shr(b, b, 1, len);
+        ++k;
+    }
+
+    return k;
+}
+
 // -------------------------------- //
 //         Number Theory Ops        //
 // -------------------------------- //

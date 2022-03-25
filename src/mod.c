@@ -8,8 +8,6 @@
 #define MOD_MAX_DIGITS 32
 #define NUM_BITS_32 32
 #define UINT_BYTES sizeof(uint32_t)
-#define LOG_2_BIT 1
-#define LOG_2_BYTE 0
 
 /**
  * @brief Extends a big integer x by padding the MSDs with 0s
@@ -22,33 +20,6 @@
 static void big_uint_extend(uint32_t *new_x, size_t new_len, const uint32_t *old_x, size_t old_len) {
     memset(new_x, 0, new_len * UINT_BYTES);
     memcpy(&new_x[new_len - old_len], old_x, old_len * UINT_BYTES);
-}
-
-/**
- * @brief Calculates log_2(x) (ceiling)
- * 
- * @param x The big integer to take the log of
- * @param len The number of digits in x
- * @param use_bits Boolean indicating whether to shift by bits (1) or digits (0)
- * @return uint32_t 
- */
-static uint32_t big_uint_log2(const uint32_t *x, size_t len, uint8_t use_bits) {
-    uint32_t k = 0;
-
-    uint32_t ZERO[len];
-    memset(ZERO, 0, len * UINT_BYTES);
-
-    uint32_t b[len];
-    memcpy(b, x, len * UINT_BYTES);
-
-    // calculate ceil(log_(2^32) p)
-    while(big_uint_cmp(b, ZERO, len) > 0) {
-        if (use_bits)   big_uint_shr2(b, b, 1, len);
-        else            big_uint_shr(b, b, 1, len);
-        ++k;
-    }
-
-    return k;
 }
 
 void mod_big_uint(uint32_t *result, const uint32_t *n, const uint32_t *p, size_t len) {
@@ -139,7 +110,7 @@ mod_t mod_init(const uint32_t *p, size_t len) {
     memset(res.r, 0, 2 * MOD_MAX_DIGITS * UINT_BYTES);
 
     // set result
-    res.k = big_uint_log2(p, len, 0);
+    res.k = big_uint_log2(p, len, LOG_2_DIGIT);
     res.len = len;
 
     // copy p and r into struct
@@ -194,7 +165,7 @@ void mod_mult(uint32_t *result, const uint32_t *a, const uint32_t *b, const mod_
 }
 
 void mod_exp(uint32_t *result, const uint32_t *x, const uint32_t *e, const mod_t *mod, size_t len) {
-    size_t digits = big_uint_log2(e, len, 1) - 1;
+    size_t digits = big_uint_log2(e, len, LOG_2_BIT) - 1;
     size_t ind = 0;
     
     uint32_t shift[len];
