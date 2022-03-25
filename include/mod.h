@@ -4,13 +4,13 @@
 #include <stdlib.h>
 #include "big-uint.h"
 
-#define N_MAX 32    // maximum number of digits
+#define MOD_MAX_DIGITS 32    // maximum number of digits
 
 typedef struct mod {
-    uint32_t            k;  // k-value in barrett reduction
+    uint32_t p[2 * MOD_MAX_DIGITS];  // pointer to prime number
+    uint32_t r[2 * MOD_MAX_DIGITS];  // r-value in barrett reduction
     size_t            len;  // number of digits in p
-    uint32_t p[2 * N_MAX];  // pointer to prime number
-    uint32_t r[2 * N_MAX];  // r-value in barrett reduction
+    uint32_t            k;  // k-value in barrett reduction
 } mod_t;
 
 /**
@@ -21,6 +21,14 @@ typedef struct mod {
  * @return mod_t 
  */
 mod_t mod_init(const uint32_t *p, size_t len);
+
+/**
+ * @brief copies the mod_t instance in src to dest
+ * 
+ * @param dest where to put the new mod_t instance
+ * @param src where to copy from
+ */
+void mod_t_copy(mod_t *dest, const mod_t *src);
 
 /**
  * @brief Calculates the pre-computation factor r in Barrett reduction 
@@ -105,5 +113,15 @@ void mod_inv(uint32_t *result, const uint32_t *x, const mod_t *mod, size_t len);
  * @param len The number of digits in m, n, and p 
  */
 void mod_div(uint32_t *result, const uint32_t *m, const uint32_t *n, const mod_t *mod, size_t len);
+
+/**
+ * @brief finds the additive inverse -n (mod p)
+ * 
+ * @param result where to store the modular inverse
+ * @param n the address of the number to negate
+ * @param p the address of the prime p
+ * @param len the number of digits in `m` and `p`
+ */
+void mod_neg(uint32_t *result, const uint32_t *n, const uint32_t *p, size_t len);
 
 #endif

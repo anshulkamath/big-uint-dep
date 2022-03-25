@@ -95,3 +95,63 @@ def mod_div(m, n, mod_t):
 
     return mod_mult(m, n_inv, mod_t)
 
+def check_euler_criterion(x: int, p: int) -> bool:
+    ''' checks Euler's criterion; x^{(p-1)/2} = 1 (mod p) '''
+    return pow(x, (p - 1) // 2, p) == 1
+
+def mod_sqrt(n: int, p: int) -> int:
+    '''
+    takes in an `n` and some prime `p` and finds the integer r in F_p where
+    r^2 = n (mod p) using the Tonelli-Shanks algorithm.
+    If no such r exists, returns None.
+    '''
+    # simple cases
+    if check_euler_criterion(n, p) != 1:
+        return 0
+    elif n == 0:
+        return 0
+    elif p == 2:
+        return p
+    elif p % 4 == 3:
+        return pow(n, (p + 1) // 4, p)
+    
+    # find Q and S such that `p - 1 = Q * 2^S`
+    s = 0
+    while ((p - 1) >> s & 1 == 0): s += 1
+    q = (p - 1) // (1 << s)
+
+    # make sure that other factor is odd (should be maintained by termination condition)
+    assert(q % 2 == 1)
+
+    # find the square root of n
+    x = 2
+    while (check_euler_criterion(x, p)):
+        x += 1
+
+    x = pow(n, (q + 1) // 2, p)
+    b = pow(n, q, p)
+    g = pow(x, q, p)
+    r = s
+
+    while True:
+        t = b
+        m = 0
+
+        for m in range(r):
+            # no solution exists
+            if t == 1:
+                break
+            t = pow(t, 2, p)
+        
+        if m == 0:
+            return random.choice([x, p - x])
+        
+        gs = pow(g, 1 << (r - m - 1), p)
+        g = (gs * gs) % p
+        x = (x * gs) % p
+        b = (b * g) % p
+        r = m
+
+def mod_neg(m: int, p: int) -> int:
+    ''' returns the additive inverse of m (mod p) '''
+    return mod_sub(0, m, p)

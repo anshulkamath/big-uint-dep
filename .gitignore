@@ -64,6 +64,7 @@ dkms.conf
 *.txt
 
 # Ignore auto-generated test files
-/scripts/*.c
+/scripts/*/*.c
 
 *.cpython*
+test.py

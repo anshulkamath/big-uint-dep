@@ -26,6 +26,22 @@ def format_int(num, num_digits):
 
     return f'{{ {ret_str[:-2]} }}'
 
+def format_point(num, num_digits=8):
+    ''' formats the given big point into a C initializer list '''
+    hex_repr = hex(num)[2:]
+    expected_len = 8 * num_digits
+
+    if len(hex_repr) < expected_len:
+        hex_repr = (expected_len - len(hex_repr)) * '0' + hex_repr
+
+    ret_str = '{\n\t\t'
+    for i in range(num_digits):
+        if i > 0 and i % 4 == 0:
+            ret_str += '\n\t\t'
+        ret_str += '0x' + hex_repr[i * 8:(i + 1) * 8] + ', '
+
+    return f'{ret_str[:-2]}\n\t}}'
+
 def create_indexer():
     ''' generator to maintain index '''
     i = 1
@@ -41,15 +57,18 @@ def initialize_test(file_name, libs):
         
         out.write('\n')
 
-def test_creator(file_name, function_name, results=['result']):
+def test_creator(file_name, function_name, types=['uint32_t'], results=['result'], args=[]):
     ''' generator to create and write skeleton of test '''
     func_names.append(f'test_{function_name}')
 
     with open(file_name, 'a', newline='') as out:
-        out.write(f'void {func_names[-1]}() {{\n')
+        out.write(f'void {func_names[-1]}({", ".join(args)}) {{\n')
         out.write('\ttesting_logger_t *tester = create_tester();\n')
-        for result in results:
-            out.write(f'\tuint32_t {result}[5] = {{ 0 }};\n')
+        for type, result in zip(types, results):
+            if type == 'uint32_t':
+                out.write(f'\t{type} {result}[8] = {{ 0 }};\n')
+            else:
+                out.write(f'\t{type} {result};\n')
         out.write('\n')
 
     yield

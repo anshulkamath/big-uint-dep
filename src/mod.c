@@ -5,6 +5,7 @@
 #include "mod.h"
 #include "big-uint.h"
 
+#define MOD_MAX_DIGITS 32
 #define NUM_BITS_32 32
 #define UINT_BYTES sizeof(uint32_t)
 
@@ -21,53 +22,58 @@ static void big_uint_extend(uint32_t *new_x, size_t new_len, const uint32_t *old
     memcpy(&new_x[new_len - old_len], old_x, old_len * UINT_BYTES);
 }
 
-/**
- * @brief Calculates log_2(x) (ceiling)
- * 
- * @param x The big integer to take the log of
- * @param len The number of digits in x
- * @param use_bits Boolean indicating whether to shift by bits (1) or digits (0)
- * @return uint32_t 
- */
-static uint32_t big_uint_log2(const uint32_t *x, size_t len, uint8_t use_bits) {
-    uint32_t k = 0;
-
-    uint32_t ZERO[len];
-    memset(ZERO, 0, len * UINT_BYTES);
-
-    uint32_t b[len];
-    memcpy(b, x, len * UINT_BYTES);
-
-    // calculate ceil(log_(2^32) p)
-    while(big_uint_cmp(b, ZERO, len) > 0) {
-        if (use_bits)   big_uint_shr2(b, b, 1, len);
-        else            big_uint_shr(b, b, 1, len);
-        ++k;
-    }
-
-    return k;
-}
-
 void mod_big_uint(uint32_t *result, const uint32_t *n, const uint32_t *p, size_t len) {
     uint32_t quotient[len];
 
     big_uint_div(quotient, result, n, p, len);
 }
 
+void mod_t_copy(mod_t *dest, const mod_t *src) {
+    dest->k = src->k;
+    dest->len = src->len;
+
+    memcpy(dest->p, src->p, 2 * MOD_MAX_DIGITS * UINT_BYTES);
+    memcpy(dest->r, src->r, 2 * MOD_MAX_DIGITS * UINT_BYTES);
+}
+
 void mod_add(uint32_t *result, const uint32_t *a, const uint32_t *b, const uint32_t *p, size_t len) {
-    big_uint_add(result, a, b, len);
+    uint32_t a_cpy[len + 1];
+    uint32_t b_cpy[len + 1];
+    uint32_t temp[len + 1];
+    uint32_t p_cpy[len + 1];
+
+    big_uint_extend(a_cpy, len + 1, a, len);
+    big_uint_extend(b_cpy, len + 1, b, len);
+    memset(temp, 0, (len + 1) * UINT_BYTES);
+    big_uint_extend(p_cpy, len + 1, p, len);
+    
+    big_uint_add(temp, a_cpy, b_cpy, len + 1);
 
     // if result > p, then subtract p
-    if (big_uint_cmp(result, p, len) > 0)
-        big_uint_sub(result, result, p, len);
+    if (big_uint_cmp(temp, p_cpy, len + 1) > 0)
+        big_uint_sub(temp, temp, p_cpy, len + 1);
+    
+    memcpy(result, temp + 1, len * UINT_BYTES);
 }
 
 void mod_sub(uint32_t *result, const uint32_t *a, const uint32_t *b, const uint32_t *p, size_t len) {
-    big_uint_sub(result, a, b, len);
+    uint32_t a_cpy[len + 1];
+    uint32_t b_cpy[len + 1];
+    uint32_t temp[len + 1];
+    uint32_t p_cpy[len + 1];
 
-    // if result > p, then subtract p
-    if (big_uint_cmp(result, p, len) > 0)
-        big_uint_add(result, result, p, len);
+    big_uint_extend(a_cpy, len + 1, a, len);
+    big_uint_extend(b_cpy, len + 1, b, len);
+    memset(temp, 0, (len + 1) * UINT_BYTES);
+    big_uint_extend(p_cpy, len + 1, p, len);
+    
+    big_uint_sub(temp, a_cpy, b_cpy, len + 1);
+
+    // if result > p, then add p
+    if (big_uint_cmp(temp, p_cpy, len + 1) > 0)
+        big_uint_add(temp, temp, p_cpy, len + 1);
+    
+    memcpy(result, temp + 1, len * UINT_BYTES);
 }
 
 // function to calculate barrett reduction
@@ -100,8 +106,11 @@ void barret_r(uint32_t *r, const uint32_t *p, size_t k, size_t len) {
 mod_t mod_init(const uint32_t *p, size_t len) {
     mod_t res;
 
+    memset(res.p, 0, 2 * MOD_MAX_DIGITS * UINT_BYTES);
+    memset(res.r, 0, 2 * MOD_MAX_DIGITS * UINT_BYTES);
+
     // set result
-    res.k = big_uint_log2(p, len, 0);
+    res.k = big_uint_log2(p, len, LOG_2_DIGIT);
     res.len = len;
 
     // copy p and r into struct
@@ -156,7 +165,7 @@ void mod_mult(uint32_t *result, const uint32_t *a, const uint32_t *b, const mod_
 }
 
 void mod_exp(uint32_t *result, const uint32_t *x, const uint32_t *e, const mod_t *mod, size_t len) {
-    size_t digits = big_uint_log2(e, len, 1) - 1;
+    size_t digits = big_uint_log2(e, len, LOG_2_BIT) - 1;
     size_t ind = 0;
     
     uint32_t shift[len];
@@ -206,3 +215,13 @@ void mod_div(uint32_t *result, const uint32_t *m, const uint32_t *n, const mod_t
     mod_inv(n_inv, n, mod, len);
     mod_mult(result, m, n_inv, mod, len);
 }
+
+void mod_neg(uint32_t *result, const uint32_t *n, const uint32_t *p, size_t len) {
+    uint32_t ZERO[len];
+    memset(ZERO, 0, len * UINT_BYTES);
+
+    mod_sub(result, ZERO, n, p, len);
+}
+
+#undef NUM_BITS_32
+#undef UINT_BYTES
