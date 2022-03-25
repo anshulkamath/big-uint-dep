@@ -3,6 +3,9 @@
 
 #include <stdlib.h>
 
+#define UINT_BYTES sizeof(uint32_t)
+#define BITS_32 32
+
 // ---------------------------- //
 //     Comparison Functions     //
 // ---------------------------- //

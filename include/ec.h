@@ -4,18 +4,18 @@
 #include <stdint.h>
 #include "mod.h"
 
-#define N_MAX 8
+#define EC_MAX_DIGITS 8
 
 typedef struct point {
-    uint32_t x[N_MAX];  // x coordinate of point
-    uint32_t y[N_MAX];  // y coordinate of point
+    uint32_t x[EC_MAX_DIGITS];  // x coordinate of point
+    uint32_t y[EC_MAX_DIGITS];  // y coordinate of point
 } point_t;
 
 typedef struct ec {
-    uint32_t a[N_MAX];  // curve parameter a
-    uint32_t b[N_MAX];  // curve parameter b
-    uint32_t p[N_MAX];  // prime of the finite field
-    uint32_t n[N_MAX];  // order of the generator point
+    uint32_t a[EC_MAX_DIGITS];  // curve parameter a
+    uint32_t b[EC_MAX_DIGITS];  // curve parameter b
+    uint32_t p[EC_MAX_DIGITS];  // prime of the finite field
+    uint32_t n[EC_MAX_DIGITS];  // order of the generator point
     mod_t    mod_p;     // the barrett reduction precomputation factor for p
     mod_t    mod_n;     // the barrett reduction precomputation factor for n
     point_t  g;         // generator point
@@ -140,7 +140,7 @@ void ec_add(point_t *res, const point_t *p1, const point_t *p2, const ec_t *ec);
  * @param pt a pointer to the point to multiply
  * @param ec a pointer to the elliptic curve instance to use
  */
-void ec_mult(point_t *res, const uint32_t *k, const uint32_t *pt, const ec_t *ec);
+void ec_mult(point_t *res, const uint32_t *k, const point_t *pt, const ec_t *ec);
 
 /**
  * @brief generates a private and a public key using the given elliptic curve
@@ -149,7 +149,6 @@ void ec_mult(point_t *res, const uint32_t *k, const uint32_t *pt, const ec_t *ec
  * @param pu_key where to store the public key
  * @param ec a pointer to the elliptic curve instance to use
  */
-void ec_keygen(uint32_t pr_key[N_MAX], point_t pu_key, const ec_t *ec);
+void ec_keygen(uint32_t pr_key[EC_MAX_DIGITS], point_t pu_key, const ec_t *ec);
 
-#undef N_MAX
 #endif

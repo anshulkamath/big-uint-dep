@@ -5,9 +5,11 @@
 #include "mod.h"
 #include "big-uint.h"
 
-#define N_MAX 32
+#define MOD_MAX_DIGITS 32
 #define NUM_BITS_32 32
 #define UINT_BYTES sizeof(uint32_t)
+#define LOG_2_BIT 1
+#define LOG_2_BYTE 0
 
 /**
  * @brief Extends a big integer x by padding the MSDs with 0s
@@ -59,8 +61,8 @@ void mod_t_copy(mod_t *dest, const mod_t *src) {
     dest->k = src->k;
     dest->len = src->len;
 
-    memcpy(dest->p, src->p, 2 * N_MAX * UINT_BYTES);
-    memcpy(dest->r, src->r, 2 * N_MAX * UINT_BYTES);
+    memcpy(dest->p, src->p, 2 * MOD_MAX_DIGITS * UINT_BYTES);
+    memcpy(dest->r, src->r, 2 * MOD_MAX_DIGITS * UINT_BYTES);
 }
 
 void mod_add(uint32_t *result, const uint32_t *a, const uint32_t *b, const uint32_t *p, size_t len) {
@@ -133,8 +135,8 @@ void barret_r(uint32_t *r, const uint32_t *p, size_t k, size_t len) {
 mod_t mod_init(const uint32_t *p, size_t len) {
     mod_t res;
 
-    memset(res.p, 0, 2 * N_MAX * UINT_BYTES);
-    memset(res.r, 0, 2 * N_MAX * UINT_BYTES);
+    memset(res.p, 0, 2 * MOD_MAX_DIGITS * UINT_BYTES);
+    memset(res.r, 0, 2 * MOD_MAX_DIGITS * UINT_BYTES);
 
     // set result
     res.k = big_uint_log2(p, len, 0);

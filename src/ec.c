@@ -6,31 +6,30 @@
 #include "big-uint.h"
 #include "mod.h"
 
-#define N_MAX 8
-#define UINT_BYTES sizeof(uint32_t)
+#define EC_MAX_DIGITS 8
 
-const static uint32_t ZERO[N_MAX] = { 0 };
+const static uint32_t ZERO[EC_MAX_DIGITS] = { 0 };
 const static point_t identity = { .x = { 0 }, .y = { 0 } };
 
 void point_print(const point_t *p) {
     printf("Point located at %p\n:", (void *) p);
     printf("\tx = ");
-    big_uint_print(p->x, N_MAX);
+    big_uint_print(p->x, EC_MAX_DIGITS);
     printf("\ty = ");
-    big_uint_print(p->y, N_MAX);
+    big_uint_print(p->y, EC_MAX_DIGITS);
 }
 
 void point_init(point_t *res, const uint32_t *x, const uint32_t *y) {
-    memcpy(res->x, x, N_MAX * UINT_BYTES);
-    memcpy(res->y, y, N_MAX * UINT_BYTES);
+    memcpy(res->x, x, EC_MAX_DIGITS * UINT_BYTES);
+    memcpy(res->y, y, EC_MAX_DIGITS * UINT_BYTES);
 }
 
 uint8_t point_is_identity(const point_t *pt) {
-    uint32_t ZERO[N_MAX];
-    memset(ZERO, 0, N_MAX * UINT_BYTES);
+    uint32_t ZERO[EC_MAX_DIGITS];
+    memset(ZERO, 0, EC_MAX_DIGITS * UINT_BYTES);
 
-    uint8_t x_is_zero = big_uint_cmp(pt->x, ZERO, N_MAX) == 0;
-    uint8_t y_is_zero = big_uint_cmp(pt->y, ZERO, N_MAX) == 0;
+    uint8_t x_is_zero = big_uint_cmp(pt->x, ZERO, EC_MAX_DIGITS) == 0;
+    uint8_t y_is_zero = big_uint_cmp(pt->y, ZERO, EC_MAX_DIGITS) == 0;
 
     return x_is_zero && y_is_zero;
 }
@@ -38,26 +37,26 @@ uint8_t point_is_identity(const point_t *pt) {
 uint8_t point_equals(const point_t *p1, const point_t *p2) {
     if (p1 == p2) return 1;
 
-    uint8_t x_eq = big_uint_equals(p1->x, p2->x, N_MAX);
-    uint8_t y_eq = big_uint_equals(p1->y, p2->y, N_MAX);
+    uint8_t x_eq = big_uint_equals(p1->x, p2->x, EC_MAX_DIGITS);
+    uint8_t y_eq = big_uint_equals(p1->y, p2->y, EC_MAX_DIGITS);
 
     return x_eq && y_eq;
 }
 
 uint8_t point_is_inverse(const point_t *p1, const point_t *p2, const ec_t *ec) {
-    uint32_t inv[N_MAX];
-    mod_neg(inv, p1->y, ec->p, N_MAX);
+    uint32_t inv[EC_MAX_DIGITS];
+    mod_neg(inv, p1->y, ec->p, EC_MAX_DIGITS);
 
     point_t inv_point;
     point_copy(&inv_point, p1);
-    memcpy(inv_point.y, inv, N_MAX * UINT_BYTES);
+    memcpy(inv_point.y, inv, EC_MAX_DIGITS * UINT_BYTES);
 
     return point_equals(p2, &inv_point);
 }
 
 void point_copy(point_t *dest, const point_t *src) {
-    memcpy(dest->x, src->x, N_MAX * UINT_BYTES);
-    memcpy(dest->y, src->y, N_MAX * UINT_BYTES);
+    memcpy(dest->x, src->x, EC_MAX_DIGITS * UINT_BYTES);
+    memcpy(dest->y, src->y, EC_MAX_DIGITS * UINT_BYTES);
 }
 
 const point_t *get_identity() {
@@ -65,30 +64,30 @@ const point_t *get_identity() {
 }
 
 uint8_t ec_init(ec_t *ec, const uint32_t *a, const uint32_t *b, const uint32_t *p, const uint32_t *n, const point_t *g) {
-    mod_t mod_p = mod_init(p, N_MAX);
+    mod_t mod_p = mod_init(p, EC_MAX_DIGITS);
 
-    uint32_t temp1[N_MAX] = { 0 };
-    uint32_t temp2[N_MAX] = { 0 };
-    temp2[N_MAX - 1] = 4;
+    uint32_t temp1[EC_MAX_DIGITS] = { 0 };
+    uint32_t temp2[EC_MAX_DIGITS] = { 0 };
+    temp2[EC_MAX_DIGITS - 1] = 4;
 
-    mod_mult(temp1, temp2, a, &mod_p, N_MAX);
-    mod_mult(temp1, temp1, a, &mod_p, N_MAX);
-    mod_mult(temp1, temp1, a, &mod_p, N_MAX);
+    mod_mult(temp1, temp2, a, &mod_p, EC_MAX_DIGITS);
+    mod_mult(temp1, temp1, a, &mod_p, EC_MAX_DIGITS);
+    mod_mult(temp1, temp1, a, &mod_p, EC_MAX_DIGITS);
 
-    temp2[N_MAX - 1] = 27;
-    mod_mult(temp2, temp2, b, &mod_p, N_MAX);
-    mod_mult(temp2, temp2, b, &mod_p, N_MAX);
+    temp2[EC_MAX_DIGITS - 1] = 27;
+    mod_mult(temp2, temp2, b, &mod_p, EC_MAX_DIGITS);
+    mod_mult(temp2, temp2, b, &mod_p, EC_MAX_DIGITS);
 
-    mod_add(temp1, temp1, temp2, p, N_MAX);
+    mod_add(temp1, temp1, temp2, p, EC_MAX_DIGITS);
 
     // if 4a^3 + 27b^2 = 0, return 1 (fail to create ec)
-    if (big_uint_cmp(temp1, ZERO, N_MAX) == 0) {
+    if (big_uint_cmp(temp1, ZERO, EC_MAX_DIGITS) == 0) {
         return 1;
     }
 
-    const size_t NUM_BYTES = N_MAX * UINT_BYTES;
+    const size_t NUM_BYTES = EC_MAX_DIGITS * UINT_BYTES;
 
-    mod_t mod_n = mod_init(n, N_MAX);
+    mod_t mod_n = mod_init(n, EC_MAX_DIGITS);
 
     memcpy(ec->a, a, NUM_BYTES);
     memcpy(ec->b, b, NUM_BYTES);
@@ -121,44 +120,47 @@ void ec_add(point_t *res, const point_t *p1, const point_t *p2, const ec_t *ec) 
     }
 
     // calculate lambda
-    uint32_t lambda[N_MAX];
-    uint32_t temp1[N_MAX];
-    uint32_t temp2[N_MAX];
+    uint32_t lambda[EC_MAX_DIGITS];
+    uint32_t temp1[EC_MAX_DIGITS];
+    uint32_t temp2[EC_MAX_DIGITS];
 
     // if the points are equal, then use the tangent line
     if (point_equals(p1, p2)) {
-        big_uint_load(lambda, 3, N_MAX);
-        mod_mult(lambda, lambda, p1->x, &ec->mod_p, N_MAX);
-        mod_mult(lambda, lambda, p1->x, &ec->mod_p, N_MAX);
-        mod_add(lambda, lambda, ec->a, ec->p, N_MAX);
+        big_uint_load(lambda, 3, EC_MAX_DIGITS);
+        mod_mult(lambda, lambda, p1->x, &ec->mod_p, EC_MAX_DIGITS);
+        mod_mult(lambda, lambda, p1->x, &ec->mod_p, EC_MAX_DIGITS);
+        mod_add(lambda, lambda, ec->a, ec->p, EC_MAX_DIGITS);
 
-        big_uint_load(temp1, 2, N_MAX);
-        mod_mult(temp1, temp1, p1->y, &ec->mod_p, N_MAX);
-        mod_inv(temp1, temp1, &ec->mod_p, N_MAX);
+        big_uint_load(temp1, 2, EC_MAX_DIGITS);
+        mod_mult(temp1, temp1, p1->y, &ec->mod_p, EC_MAX_DIGITS);
+        mod_inv(temp1, temp1, &ec->mod_p, EC_MAX_DIGITS);
 
-        mod_mult(lambda, lambda, temp1, &ec->mod_p, N_MAX);
+        mod_mult(lambda, lambda, temp1, &ec->mod_p, EC_MAX_DIGITS);
     } else {
-        mod_sub(lambda, p2->y, p1->y, ec->p, N_MAX);
-        mod_sub(temp1, p2->x, p1->x, ec->p, N_MAX);
-        mod_inv(temp2, temp1, &ec->mod_p, N_MAX);
-        mod_mult(lambda, lambda, temp2, &ec->mod_p, N_MAX);
+        mod_sub(lambda, p2->y, p1->y, ec->p, EC_MAX_DIGITS);
+        mod_sub(temp1, p2->x, p1->x, ec->p, EC_MAX_DIGITS);
+        mod_inv(temp2, temp1, &ec->mod_p, EC_MAX_DIGITS);
+        mod_mult(lambda, lambda, temp2, &ec->mod_p, EC_MAX_DIGITS);
     }
 
-    uint32_t x3[N_MAX];
-    uint32_t y3[N_MAX];
+    uint32_t x3[EC_MAX_DIGITS];
+    uint32_t y3[EC_MAX_DIGITS];
 
     // calculate x3
-    mod_mult(x3, lambda, lambda, &ec->mod_p, N_MAX);
-    mod_sub(x3, x3, p1->x, ec->p, N_MAX);
-    mod_sub(x3, x3, p2->x, ec->p, N_MAX);
+    mod_mult(x3, lambda, lambda, &ec->mod_p, EC_MAX_DIGITS);
+    mod_sub(x3, x3, p1->x, ec->p, EC_MAX_DIGITS);
+    mod_sub(x3, x3, p2->x, ec->p, EC_MAX_DIGITS);
 
     // calculate y3
-    mod_sub(y3, p1->x, x3, ec->p, N_MAX);
-    mod_mult(y3, lambda, y3, &ec->mod_p, N_MAX);
-    mod_sub(y3, y3, p1->y, ec->p, N_MAX);
+    mod_sub(y3, p1->x, x3, ec->p, EC_MAX_DIGITS);
+    mod_mult(y3, lambda, y3, &ec->mod_p, EC_MAX_DIGITS);
+    mod_sub(y3, y3, p1->y, ec->p, EC_MAX_DIGITS);
 
     point_init(res, x3, y3);
 }
 
-#undef N_MAX
-#undef UINT_BYTES
+void ec_mult(point_t *res, const uint32_t *k, const point_t *pt, const ec_t *ec) {
+
+}
+
+#undef EC_MAX_DIGITS

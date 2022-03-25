@@ -4,8 +4,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#define BITS_32 32
-
 // ---------------------------- //
 //       Helper Functions       //
 // ---------------------------- //
