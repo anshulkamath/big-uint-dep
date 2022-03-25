@@ -497,6 +497,99 @@ void test_ec_add(const ec_t *EC) {
 	log_tests(tester);
 }
 
+void test_ec_mult(const ec_t *EC) {
+	testing_logger_t *tester = create_tester();
+	point_t result;
+
+	// Test 1
+	const uint32_t k1[] = { 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000 };
+
+	const uint32_t x1[] = { 0x79be667e, 0xf9dcbbac, 0x55a06295, 0xce870b07, 0x029bfcdb, 0x2dce28d9, 0x59f2815b, 0x16f81798 };
+	const uint32_t y1[] = { 0x483ada77, 0x26a3c465, 0x5da4fbfc, 0x0e1108a8, 0xfd17b448, 0xa6855419, 0x9c47d08f, 0xfb10d4b8 };
+	point_t p1;
+	point_init(&p1, &x1[0], &y1[0]);
+
+	const uint32_t expected_x1[] = { 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000 };
+	const uint32_t expected_y1[] = { 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000 };
+	point_t  expected_p1;
+	point_init(&expected_p1, &expected_x1[0], &expected_y1[0]);
+
+	ec_mult(&result, k1, &p1, EC);
+
+	expect(tester, point_equals(&expected_p1, &result));
+
+	// Test 2
+	const uint32_t k2[] = { 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000001 };
+
+	const uint32_t x2[] = { 0x79be667e, 0xf9dcbbac, 0x55a06295, 0xce870b07, 0x029bfcdb, 0x2dce28d9, 0x59f2815b, 0x16f81798 };
+	const uint32_t y2[] = { 0x483ada77, 0x26a3c465, 0x5da4fbfc, 0x0e1108a8, 0xfd17b448, 0xa6855419, 0x9c47d08f, 0xfb10d4b8 };
+	point_t p2;
+	point_init(&p2, &x2[0], &y2[0]);
+
+	const uint32_t expected_x2[] = { 0x79be667e, 0xf9dcbbac, 0x55a06295, 0xce870b07, 0x029bfcdb, 0x2dce28d9, 0x59f2815b, 0x16f81798 };
+	const uint32_t expected_y2[] = { 0x483ada77, 0x26a3c465, 0x5da4fbfc, 0x0e1108a8, 0xfd17b448, 0xa6855419, 0x9c47d08f, 0xfb10d4b8 };
+	point_t  expected_p2;
+	point_init(&expected_p2, &expected_x2[0], &expected_y2[0]);
+
+	ec_mult(&result, k2, &p2, EC);
+
+	expect(tester, point_equals(&expected_p2, &result));
+
+	// Test 3
+	const uint32_t k3[] = { 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000002 };
+
+	const uint32_t x3[] = { 0x79be667e, 0xf9dcbbac, 0x55a06295, 0xce870b07, 0x029bfcdb, 0x2dce28d9, 0x59f2815b, 0x16f81798 };
+	const uint32_t y3[] = { 0x483ada77, 0x26a3c465, 0x5da4fbfc, 0x0e1108a8, 0xfd17b448, 0xa6855419, 0x9c47d08f, 0xfb10d4b8 };
+	point_t p3;
+	point_init(&p3, &x3[0], &y3[0]);
+
+	const uint32_t expected_x3[] = { 0xc6047f94, 0x41ed7d6d, 0x3045406e, 0x95c07cd8, 0x5c778e4b, 0x8cef3ca7, 0xabac09b9, 0x5c709ee5 };
+	const uint32_t expected_y3[] = { 0x1ae168fe, 0xa63dc339, 0xa3c58419, 0x466ceaee, 0xf7f63265, 0x3266d0e1, 0x236431a9, 0x50cfe52a };
+	point_t  expected_p3;
+	point_init(&expected_p3, &expected_x3[0], &expected_y3[0]);
+
+	ec_mult(&result, k3, &p3, EC);
+
+	expect(tester, point_equals(&expected_p3, &result));
+
+	// Test 4
+	const uint32_t k4[] = { 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000059 };
+
+	const uint32_t x4[] = { 0x79be667e, 0xf9dcbbac, 0x55a06295, 0xce870b07, 0x029bfcdb, 0x2dce28d9, 0x59f2815b, 0x16f81798 };
+	const uint32_t y4[] = { 0x483ada77, 0x26a3c465, 0x5da4fbfc, 0x0e1108a8, 0xfd17b448, 0xa6855419, 0x9c47d08f, 0xfb10d4b8 };
+	point_t p4;
+	point_init(&p4, &x4[0], &y4[0]);
+
+	const uint32_t expected_x4[] = { 0xd3cc30ad, 0x6b483e4b, 0xc79ce2c9, 0xdd8bc549, 0x93e947eb, 0x8df787b4, 0x42943d3f, 0x7b527eaf };
+	const uint32_t expected_y4[] = { 0x8b378a22, 0xd827278d, 0x89c5e9be, 0x8f9508ae, 0x3c2ad462, 0x90358630, 0xafb34db0, 0x4eede0a4 };
+	point_t  expected_p4;
+	point_init(&expected_p4, &expected_x4[0], &expected_y4[0]);
+
+	ec_mult(&result, k4, &p4, EC);
+
+	expect(tester, point_equals(&expected_p4, &result));
+
+	// Test 5
+	const uint32_t k5[] = { 0xf72f2bb8, 0x3586fca7, 0xfa0b8518, 0x8296f5ea, 0xbaeb41a5, 0xe65a8149, 0x40e2a20a, 0x1bd7ce74 };
+
+	const uint32_t x5[] = { 0x79be667e, 0xf9dcbbac, 0x55a06295, 0xce870b07, 0x029bfcdb, 0x2dce28d9, 0x59f2815b, 0x16f81798 };
+	const uint32_t y5[] = { 0x483ada77, 0x26a3c465, 0x5da4fbfc, 0x0e1108a8, 0xfd17b448, 0xa6855419, 0x9c47d08f, 0xfb10d4b8 };
+	point_t p5;
+	point_init(&p5, &x5[0], &y5[0]);
+
+	const uint32_t expected_x5[] = { 0xfe5d83ca, 0x5b2f7cc3, 0x557195eb, 0x00ebd930, 0xc3543939, 0x34ea60a1, 0x681d4233, 0xae0b0cec };
+	const uint32_t expected_y5[] = { 0x5d34d224, 0xb4e87eb9, 0xccf86bdc, 0xfbb56969, 0xe846da33, 0xf5f896ca, 0x7eb72160, 0x86550e85 };
+	point_t  expected_p5;
+	point_init(&expected_p5, &expected_x5[0], &expected_y5[0]);
+
+	ec_mult(&result, k5, &p5, EC);
+
+	expect(tester, point_equals(&expected_p5, &result));
+
+	log_tests(tester);
+}
+
+
 int main() {
     test_point_init();
     test_get_identity();
@@ -510,6 +603,7 @@ int main() {
 
 	test_point_is_inverse(&EC);
     test_ec_add(&EC);
+	test_ec_mult(&EC);
 
     return 1;
 }

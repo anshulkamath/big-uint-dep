@@ -160,7 +160,22 @@ void ec_add(point_t *res, const point_t *p1, const point_t *p2, const ec_t *ec) 
 }
 
 void ec_mult(point_t *res, const uint32_t *k, const point_t *pt, const ec_t *ec) {
+    uint32_t k_cpy[EC_MAX_DIGITS];
+    memcpy(k_cpy, k, EC_MAX_DIGITS * UINT_BYTES);
 
+    int64_t bits = (int64_t) big_uint_log2(k, EC_MAX_DIGITS, LOG_2_BIT);
+    
+    point_copy(res, get_identity());
+    while (bits >= 0) {
+        ec_add(res, res, res, ec);
+
+        big_uint_shr2(k_cpy, k, bits, EC_MAX_DIGITS);
+        if (k_cpy[EC_MAX_DIGITS - 1] & 1) {
+            ec_add(res, res, pt, ec);
+        }
+
+        --bits;
+    }
 }
 
 #undef EC_MAX_DIGITS
