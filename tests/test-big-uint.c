@@ -1060,6 +1060,64 @@ void test_big_uint_div() {
     log_tests(tester);
 }
 
+void test_big_uint_log2() {
+     // Define variables to be tested with
+    testing_logger_t *tester = create_tester();
+    uint32_t expected;
+
+    // Log_2 bit tests
+    // Test 1
+    const uint32_t a1[] = { 0x00000001 };
+    expected = 1;
+
+    expect(tester, big_uint_log2(a1, 1, LOG_2_BIT) == expected);
+
+    // Test 2
+    const uint32_t a2[] = { 0x0000000f };
+    expected = 4;
+
+    expect(tester, big_uint_log2(a2, 1, LOG_2_BIT) == expected);
+
+    // Test 3
+    const uint32_t a3[] = { 0x00000001, 0x00000000 };
+    expected = 33;
+
+    expect(tester, big_uint_log2(a3, 2, LOG_2_BIT) == expected);
+
+    // Test 4
+    const uint32_t a4[] = { 0x10000001, 0x10000000 };
+    expected = 61;
+
+    expect(tester, big_uint_log2(a4, 2, LOG_2_BIT) == expected);
+
+    // Log_2 byte tests
+    // Test 1
+    const uint32_t b1[] = { 0x00000001 };
+    expected = 1;
+
+    expect(tester, big_uint_log2(b1, 1, LOG_2_DIGIT) == expected);
+
+    // Test 2
+    const uint32_t b2[] = { 0x0000000f };
+    expected = 1;
+
+    expect(tester, big_uint_log2(b2, 1, LOG_2_DIGIT) == expected);
+
+    // Test 3
+    const uint32_t b3[] = { 0x00000001, 0x00000000 };
+    expected = 2;
+
+    expect(tester, big_uint_log2(b3, 2, LOG_2_DIGIT) == expected);
+
+    // Test 4
+    const uint32_t b4[] = { 0x00000000, 0x10000001, 0x10000000 };
+    expected = 2;
+
+    expect(tester, big_uint_log2(b4, 3, LOG_2_DIGIT) == expected);
+
+    log_tests(tester);
+}
+
 void test_big_uint_gcd() {
     testing_logger_t *tester = create_tester();
     uint32_t result[5] = { 0 };
@@ -1265,6 +1323,7 @@ int main() {
     test_big_uint_sub();
     test_big_uint_mult();
     test_big_uint_div();
+    test_big_uint_log2();
     test_big_uint_gcd();
     test_big_uint_gcd_extended();
 
